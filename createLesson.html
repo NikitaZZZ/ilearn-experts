@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ILearn - Уроки</title>
+    <link rel="stylesheet" href="css/createLesson.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+</head>
+<body>
+    <div id="schoolwork">
+        <nav class="navbar navbar-light bg-light">
+            <div class="container-fluid" id="navbar-schoolwork">
+                <a class="navbar-brand" href="#">
+                    <img src="img/lar_black.png" width="30" height="30" loading="lazy">
+                    ILearn Schoolwork
+                </a>
+                <!-- <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="dopOptions" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Доп. возможности
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="dopOptions">
+                        <li><a class="nav-link" onclick="plus_fs()">Увеличить размер текста</a></li>
+                        <li><a class="nav-link" onclick="minus_fs()">Уменьшить размер текста</a></li>
+                        <li><a class="nav-link" onclick="location.reload()">Сбросить размер текста</a></li>
+                    </ul>
+                </li> -->
+                <div class="d-flex">
+                    <button class="btn btn-outline-danger" id="back" onclick="location.href='index.html'">Назад</button>
+                </div>
+            </div>
+        </nav>
+
+        <a data-bs-target="#create-lesson" data-bs-toggle="modal" style="cursor: pointer" class="list-group-item list-group-item-action mt-3">
+            <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">Создать урок</h5>
+                <small class="text-muted">Открыть</small>
+            </div>
+        </a>
+        <a data-bs-target="#all-lessons" data-bs-toggle="modal" style="cursor: pointer" class="list-group-item list-group-item-action">
+            <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">Посмотреть уроки</h5>
+                <small class="text-muted">Открыть</small>
+            </div>
+        </a>
+
+        <div class="modal fade" id="all-lessons">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header"></div>
+                    <div class="modal-body"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="create-lesson">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Создать урок</h5>
+
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-sm" id="name-of-lesson"> <!-- Theme of the lesson -->
+                                    <p class="d-block fw-bold">Тема: </p> <input type="text" placeholder="Введите тему вашего урока" class="form-control mb-3" v-model="formCreateLesson.theme">
+                                </div>
+                                <div class="col-sm" id="links to cospects">
+                                    <p class="fw-bold">Ссылки на конспекты</p>
+
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" v-model="formCreateLesson.textLink" id="text-link-to-conspects-input" placeholder="Название ссылки">
+                                        <input type="text" class="form-control" v-model="formCreateLesson.link" id="link-to-conspects-input" placeholder="Вставьте сюда ссылку">
+                                        <button class="btn btn-outline-success" @click="addLink"><i class="fas fa-plus"></i></button>
+                                    </div>
+
+                                    <div id="list-links-conspects">
+                                        <ul>
+                                            <li class="link-primary" v-for="elemLink in formCreateLesson.listLinks"><a :href="elemLink.link" target="_blank">{{ elemLink.name }}</a></li>
+                                        </ul>   
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm" id="desc-lesson"> <!-- Description of the lesson -->
+                                    <p class="fw-bold">Описание урока, главные тезисы</p>
+
+                                    <textarea class="form-control mb-3" v-model="formCreateLesson.description" placeholder="Описание урока" aria-label="With textarea"></textarea>
+                                    
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="main-theses-input" placeholder="Главные тезисы" v-model="formCreateLesson.thesis"> <button class="btn btn-outline-success" @click="addThesis"><i class="fas fa-plus"></i></button>
+                                    </div>
+                                    <div id="list-main-theses">
+                                        <ul>
+                                            <li v-for="thesis in formCreateLesson.listTheses">{{ thesis }}</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="col-sm"> <!-- Tasks of the lesson -->
+                                    <p class="fw-bold">Задания урока</p>
+
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" v-model="formCreateLesson.taskLink" id="add-task-input" placeholder="Вставьте сюда ссылку на урок">
+                                        <button class="btn btn-outline-success" id="add-task-btn" @click="addTaskLink">Добавить</button>
+                                    </div>
+
+                                    <div id="list-links-tasks">
+                                        <ul>
+                                            <li class="text-primary" v-for="taskLink in formCreateLesson.listTasksLink">{{ taskLink }}</li>
+                                        </ul>
+                                    </div>
+
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" v-model="formCreateLesson.taskText" id="add-task-input" placeholder="Задание текстом">
+                                        <button class="btn btn-outline-success" id="add-task-btn" @click="addTaskText">Добавить</button>
+                                    </div>
+
+                                    <div id="list-tasks">
+                                        <ul>
+                                            <li v-for="taskText in formCreateLesson.listTasksText">{{ taskText }}</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr>
+
+                            <p class="fw-bold">Класс</p>
+
+                            <div class="input-group">
+                                <select class="form-select" v-model="formCreateLesson.klassNumber">
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                    <option value="8">8</option>
+                                    <option value="9">9</option>
+                                    <option value="10">10</option>
+                                    <option value="11">11</option>
+                                </select>
+                                <input type="text" class="form-control" v-model="formCreateLesson.klassWord" placeholder="Буква класса" oninput="justOneSymbol(this)">
+                            </div>
+
+                            <hr>
+
+                            <input type="checkbox" v-model="formCreateLesson.lessonForAll" class="form-check-input" id="forAll">
+                            <label class="form-check-label" for="forAll">
+                                Урок для всех
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="modal-header">
+                        <button class="btn btn-outline-success" @click="createLesson">Создать урок</button>
+                    </div>
+
+                    <!-- <div class="modal-content">
+                        <button class="btn btn-outline-success">Создать урок</button> -->
+                    <!-- </div> -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://kit.fontawesome.com/373834e38f.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.4.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.4.2/firebase-analytics.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.4.2/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.4.2/firebase-storage.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.4.2/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.4.2/firebase-firestore.js"></script>
+    <script src="js/firebase.js"></script>
+    <script src="js/createLesson.js"></script>
+</body>
+</html>

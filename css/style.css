@@ -1,0 +1,270 @@
+a { text-decoration: none; }
+
+.cursor { cursor: pointer; }
+
+#il-itests, #il-chat, 
+#il-to-do-app, #profile-class,
+#profile-school { cursor: pointer; }
+
+.likePost { color: red; }
+
+#task {
+    background: none;
+    color: #000;
+    border: 1px solid #000;
+}
+
+#name-task {
+    background: none;
+    color: #000;
+}
+
+#table_tests, #create-test { margin-top: 2%; }
+
+#question { margin-bottom: 1%; margin-top: 2%; }
+
+#test { padding: 3%; }
+
+#option1_div, #option2_div,
+#option3_div, #option4_div,
+#correct_answer_info, #back, #send_test,
+#title, #checkbox_admin_panel,
+#form_reg, #title, #reg_teacher { margin-top: 1%; }
+
+#send_test, .swal2-cancel { margin-left: 1%; }
+
+#test { margin: 1%; }
+
+#number-test, #subject-test,
+#school-test, #klass-test, #theme-test { padding-top: 1.7%; }
+
+#results-students-tab, #tests-tab, #back-tab {
+    color: #A850BE;
+}
+
+#reg-new-student:hover {
+    background: #A850BE;
+    color: #fff;
+    transition: 0.5s ease;
+}
+
+#v-pills-results-students-tab, #v-pills-create-test-tab, 
+#v-pills-tests-tab, #v-back, #v-pills-create-big-test-tab {
+    border-radius: 0;
+}
+
+#v-pills-results-students-tab:hover, #v-pills-tests-tab:hover, 
+#v-pills-create-test-tab:hover, #v-pills-create-big-test-tab:hover,
+#v-back:hover {
+    background: #A850BE;
+    color: #fff;
+    transition: 0.3s ease;
+}
+
+.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+    background: #A850BE;
+    color: #fff;
+    transition: 0.3s ease;
+}
+
+#main {
+    margin-top: 1%;
+}
+
+#link-tabs {
+    margin-left: 1%;
+}
+
+#create-test-btn {
+    margin-top: 1.5vh;
+}
+
+#create-test-admin-btn {
+    margin-left: 1vh;
+}
+
+#test-footer {
+    padding-top: 0;
+    border-top: 0;
+    margin-left: 1vh;
+    background: #fff;
+}
+
+.close-test {
+    color: #fff;
+    margin-top: 1.4vh;
+    background: #343a40;
+}
+
+#send-test { margin-top: 1.4vh; }
+
+#hr { height: 0.2vh; }
+
+.appraisal {
+    width: 3em;
+    height: 3em;
+    margin: 0;
+    padding: 0.6em 1.2em 0;
+    border-radius: 30px;
+}
+
+#text-appersial {
+    text-align: center;
+}
+
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+}
+
+#testsCollapse {
+    background: #fff;
+}
+
+#inputTimerDiv {
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+#plus-question-icon {
+    border: 1px solid #A850BE;
+    color: #A850BE;
+}
+
+#plus-question-icon:hover {
+    background: #A850BE;
+    color: #fff;
+}
+
+#btn-tooltip:hover {
+    cursor: pointer;
+}
+
+.search {
+    width: 20em;
+    margin-bottom: 1em;
+}
+
+/* #create-question-text, #create-question-form,
+#pills-tab {
+    width: 400px;
+    margin: auto;
+} */
+
+/* Indentation for selecte */
+
+#form-div-select-cllet {
+    margin-top: 20px;
+    margin-bottom: 15px;
+}
+
+#select-class {
+    margin-bottom: 5px;
+}
+
+#select-letter {
+    margin-top: 5px;
+}
+
+#profile-school { margin-left: 0; }
+
+li { list-style-type: none; }
+
+#navbar-tests { justify-content: flex-start; }
+
+#assistant-btn-non-active {
+    margin: 2em;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    border: none;
+}
+
+#assistant-btn-active {
+    margin: 2em;
+    border-radius: 50%;
+    background: linear-gradient(90deg, rgba(226,255,0,1) 36%, rgba(180,204,118,1) 56%);
+    width: 50px;
+    height: 50px;
+    border: none;
+}
+
+.img-chats { max-width: 300px; max-height: 350px; }
+
+.assistant { 
+    position: fixed;
+    bottom: 0; 
+    right: 0; 
+}
+
+#speech-text { 
+    background: rgb(239, 239, 239);
+    padding: 1rem;
+    display: none; 
+    margin-right: 2rem; 
+}
+
+#input_answer_div { padding-left: 0; }
+
+#back { float: right; }
+
+#select-subject-average, #select-subject-graphs { 
+    width: 200px; 
+    margin-top: 1rem; 
+    margin-bottom: 1rem;
+}
+
+.result-average { 
+    padding: 1rem;
+    background: rgb(233, 233, 233); 
+}
+
+.average-score { float: right; }
+
+.text-average { float: right; }
+
+#lul-link { cursor: pointer; }
+
+/* .swiper {
+    width: 300px;
+    height: 100px;
+} */
+
+/* For swiper */
+
+.swiper {
+    width: 50%;
+    height: 300%;
+}
+
+.swiper-slide {
+    text-align: center;
+    font-size: 18px;
+    background: #fff;
+
+    /* Center slide text vertically */
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    -webkit-justify-content: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    -webkit-align-items: center;
+    align-items: center;
+}
+
+.pb-img {
+    max-width: 370px;
+    max-height: 500px;
+}
+
+#dopOptionsUl > li { cursor: pointer; }
+
+.smallNewsForCertainClass {
+    margin-left: 0.5rem;
+}
