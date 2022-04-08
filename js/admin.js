@@ -835,32 +835,32 @@ function tests() {
                         <img alt="imageTest" style="width: 30%" class="img-fluid" id="image-test${question_number_admin}">
         
                         <div class="form-check" style='padding-top: 0; margin-top: 0; margin-bottom: 0;' id="option1_div">
-                            <p class="text-danger" style='padding-top: 0; margin-top: 0; margin-bottom: 0;' id="option1_text${id}">1) ${questions_db[question_number_admin].option_1}</p>
+                            <p class="text-danger" style='padding-top: 0; margin-top: 0; margin-bottom: 0;' id="option1_text${id}${question_number_admin}">1) ${questions_db[question_number_admin].option_1}</p>
                         </div>
                         <div class="form-check" style='padding-top: 0; margin-top: 0.3em; margin-bottom: 0;' id="option2_div">
-                            <p class="text-danger" style='padding-top: 0; margin-top: 0; margin-bottom: 0;' id="option2_text${id}">2) ${questions_db[question_number_admin].option_2}</p>
+                            <p class="text-danger" style='padding-top: 0; margin-top: 0; margin-bottom: 0;' id="option2_text${id}${question_number_admin}">2) ${questions_db[question_number_admin].option_2}</p>
                         </div>
                         <div class="form-check" style='padding-top: 0; margin-top: 0.3em; margin-bottom: 0;' id="option3_div">
-                            <p class="text-danger" style='padding-top: 0; margin-top: 0; margin-bottom: 0;' id="option3_text${id}">3) ${questions_db[question_number_admin].option_3}</p>
+                            <p class="text-danger" style='padding-top: 0; margin-top: 0; margin-bottom: 0;' id="option3_text${id}${question_number_admin}">3) ${questions_db[question_number_admin].option_3}</p>
                         </div>
                         <div class="form-check" style='padding-top: 0; margin-top: 0.3em;' id="option4_div">
-                            <p class="text-danger" style='padding-top: 0; margin-top: 0; padding-bottom: 1.5em' id="option4_text${id}">4) ${questions_db[question_number_admin].option_4}</p>
+                            <p class="text-danger" style='padding-top: 0; margin-top: 0; padding-bottom: 1.5em' id="option4_text${id}${question_number_admin}">4) ${questions_db[question_number_admin].option_4}</p>
                         </div>
                     </div>
                 `;
 
                 switch (questions_db[question_number_admin].correct_answer) {
                     case 1:
-                        document.getElementById(`option1_text${id}`).className = 'text-success';
+                        document.getElementById(`option1_text${id}${question_number_admin}`).className = 'text-success';
                         break;
                     case 2:
-                        document.getElementById(`option2_text${id}`).className = 'text-success';
+                        document.getElementById(`option2_text${id}${question_number_admin}`).className = 'text-success';
                         break;
                     case 3:
-                        document.getElementById(`option3_text${id}`).className = 'text-success';
+                        document.getElementById(`option3_text${id}${question_number_admin}`).className = 'text-success';
                         break;
                     case 4:
-                        document.getElementById(`option4_text${id}`).className = 'text-success';
+                        document.getElementById(`option4_text${id}${question_number_admin}`).className = 'text-success';
                         break;
                 }
             } else if (theme_fb != ("ЕГЭ" || "ОГЭ" || "ВПР")) {
