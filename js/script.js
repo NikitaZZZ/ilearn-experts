@@ -146,7 +146,7 @@ Vue.component('teacher-app', {
                             <div class="d-flex w-100 justify-content-between">
                                 <h5 class="mb-1">
                                     <img alt="icon" src="img/bg.png" style="border-radius: 20px; width: 30px; height: 30px;" class="d-inline-block align-text-top">
-                                    To Do List
+                                    ILists
                                 </h5>
                                 <small class="text-muted">Открыть</small>
                             </div>
@@ -156,7 +156,7 @@ Vue.component('teacher-app', {
                             <div class="d-flex w-100 justify-content-between">
                                 <h5 class="mb-1">
                                     <img alt="icon" src="img/lar_black.png" style="width: 30px; height: 30px;" class="d-inline-block align-text-top">
-                                    LAR Chat
+                                    IChats
                                 </h5>
                                 <small class="text-muted">Открыть</small>
                             </div>
@@ -166,7 +166,7 @@ Vue.component('teacher-app', {
                             <div class="d-flex w-100 justify-content-between">
                                 <h5 class="mb-1">
                                     <img alt="icon" src="img/lar_black.png" style="width: 30px; height: 30px;" class="d-inline-block align-text-top">
-                                    LAR SchoolWork
+                                    ILessons
                                 </h5>
                                 <small class="text-muted">Открыть</small>
                             </div>
@@ -674,7 +674,7 @@ Vue.component('student-app', {
                             <div class="d-flex w-100 justify-content-between">
                                 <h5 class="mb-1">
                                     <img alt="icon" src="img/lar_black.png" style="width: 30px; height: 30px;" class="d-inline-block align-text-top">
-                                    LAR Schoolwork
+                                    ILessons
                                 </h5>
                                 <small class="text-muted">Открыть</small>
                             </div>
