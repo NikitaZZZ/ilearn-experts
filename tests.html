@@ -135,7 +135,7 @@
             let question_number = parseInt(question_number_e);
             let date = new Date().toLocaleDateString();
 
-            firebase.database().ref(`school${user.school}/tests/${user.klass}/test${id}`).on('value', (snapshot) => {
+            firebase.database().ref(`school${user.school}/tests/${klass}/test${id}`).on('value', (snapshot) => {
                 test_subject = snapshot.val().subject;
                 test_theme = snapshot.val().theme;
                 test_questions = snapshot.val().questions;
@@ -820,8 +820,7 @@
                     }
                 });
 
-                firebase.database().ref(
-                    `school${user.school}/tests/${user.klass}/test${idTest}/results/result${idResult}/`).set({
+                firebase.database().ref(`school${user.school}/tests/${user.klass}/test${idTest}/results/result${idResult}/`).set({
                     result: results_test,
                     appraisal: appraisal,
                     idTest: idTest,
@@ -830,6 +829,14 @@
 
                 let btnSendTest = document.getElementById(`send-test${idTest}`);
                 btnSendTest.disabled = true;
+
+                resultsStudent = [];
+                teacher_id = '';
+                test_subject = '';
+                test_theme = '';
+                test_questions = '';
+                test_id = '';
+                test_result = '';
             }
         }
     </script>

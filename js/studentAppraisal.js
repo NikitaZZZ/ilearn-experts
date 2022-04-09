@@ -10,35 +10,37 @@ let myChart;
 firebase.database().ref(`school${user.school}/tests/${user.klass}`).on('value', (snapshot) => {
     for (let key in snapshot.val()) {
         firebase.database().ref(`school${user.school}/tests/${user.klass}/${key}/results`).on('child_added', (data) => {
-            const appraisal = data.val().appraisal;
-            const result = data.val().result;
-            const idTest = data.val().idTest;
-
-            divResults.innerHTML += `
-                <tr id="resultTest${idTest}">
-                    <th scope="row">${counterTests++}</th>
-                    <td>${result[0].test_subject}</td>
-                    <td>${result[0].test_theme}</td>
-                    <td>${result[0].date}</td>
-                    <td id="appraisal">
-                        <div id="appraisalDiv${idTest}" class="appraisal alert">
-                            <p id="text-appraisal">${appraisal}</p>
-                        </div>
-                    </td>
-                </tr>
-            `;
-
-            switch (appraisal) {
-                case 2: document.getElementById(`appraisalDiv${idTest}`).className = "appraisal alert alert-danger"; break;
-                case 3: document.getElementById(`appraisalDiv${idTest}`).className = "appraisal alert alert-warning"; break;
-                case 4: document.getElementById(`appraisalDiv${idTest}`).className = "appraisal alert alert-primary"; break;
-                case 5: document.getElementById(`appraisalDiv${idTest}`).className = "appraisal alert alert-success"; break;
+            if (removeSpaces(user.fullName) == removeSpaces(data.val().fullName)) {
+                const appraisal = data.val().appraisal;
+                const result = data.val().result;
+                const idTest = data.val().idTest;
+    
+                divResults.innerHTML += `
+                    <tr id="resultTest${idTest}">
+                        <th scope="row">${counterTests++}</th>
+                        <td>${result[0].test_subject}</td>
+                        <td>${result[0].test_theme}</td>
+                        <td>${result[0].date}</td>
+                        <td id="appraisal">
+                            <div id="appraisalDiv${idTest}" class="appraisal alert">
+                                <p id="text-appraisal">${appraisal}</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+    
+                switch (appraisal) {
+                    case 2: document.getElementById(`appraisalDiv${idTest}`).className = "appraisal alert alert-danger"; break;
+                    case 3: document.getElementById(`appraisalDiv${idTest}`).className = "appraisal alert alert-warning"; break;
+                    case 4: document.getElementById(`appraisalDiv${idTest}`).className = "appraisal alert alert-primary"; break;
+                    case 5: document.getElementById(`appraisalDiv${idTest}`).className = "appraisal alert alert-success"; break;
+                }
+    
+                appraisals.push({
+                    subject: result[0].test_subject,
+                    appraisal: appraisal
+                });
             }
-
-            appraisals.push({
-                subject: result[0].test_subject,
-                appraisal: appraisal
-            });
         });
     }
 

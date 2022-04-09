@@ -21,10 +21,16 @@ let timerMassive = [];
 
 let testsNeed = 0;
 
+function removeSpaces(str) {
+  return str.replace(/\s+/g, '');
+}
+
+const klass = removeSpaces(user.klass);
+
 // Скрывать пройденные тесты
-firebase.database().ref(`school${user.school}/tests/${user.klass}`).on('value', (snapshot) => {
+firebase.database().ref(`school${user.school}/tests/${klass}`).on('value', (snapshot) => {
   for (let key in snapshot.val()) {
-    firebase.database().ref(`school${user.school}/tests/${user.klass}/${key}/results`).on('child_added', (data) => {
+    firebase.database().ref(`school${user.school}/tests/${klass}/${key}/results`).on('child_added', (data) => {
       let testAcc = document.getElementById(`testAcc${data.val().idTest}`);
       testAcc.parentNode.removeChild(testAcc);
     });
@@ -32,7 +38,7 @@ firebase.database().ref(`school${user.school}/tests/${user.klass}`).on('value', 
 });
 
 // Вывод тестов
-firebase.database().ref(`school${user.school}/tests/${user.klass}`).on('child_added', (snapshot) => {
+firebase.database().ref(`school${user.school}/tests/${klass}`).on('child_added', (snapshot) => {
   const id_db = snapshot.val().idTest;
   const questions_db = snapshot.val().questions;
   const subject_db = snapshot.val().subject;
@@ -285,7 +291,7 @@ firebase.database().ref(`school${user.school}/tests/${user.klass}`).on('child_ad
 });
 
 function checkTimer(id) {
-  firebase.database().ref(`school${user.school}/tests/${user.klass}/test${id}`).on('value', (snapshot) => {
+  firebase.database().ref(`school${user.school}/tests/${klass}/test${id}`).on('value', (snapshot) => {
     let timerMinutesTest = snapshot.val().timerMinutes;
     let timerSecondsTest = snapshot.val().timerSeconds;
     let timerNeed = snapshot.val().timer;

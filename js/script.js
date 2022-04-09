@@ -748,12 +748,11 @@ let ILVue = new Vue({
                     <input type="email" id="emailTeacherSignUp" class="swal2-input" placeholder="Email">
                     <input type="password" id="passwordTeacherSignUp" class="swal2-input" placeholder="Пароль">
                     <input type="text" id="fullNameTeacherSignUp" class="swal2-input" placeholder="Имя и фамилия">
-                    <input type="text" id="schoolTeacherSignUp" class="swal2-input" placeholder="Школа">
-                    <input type="text" id="yourClassTeacherSignUp" class="swal2-input" placeholder="Ваш класс">
+                    <input type="text" id="schoolTeacherSignUp" class="swal2-input" placeholder="Школа (Пример: 192)">
+                    <input type="text" id="yourClassTeacherSignUp" class="swal2-input" placeholder="Ваш класс (Пример: 10А)">
                 `,
                 confirmButtonText: 'Далее',
                 showDenyButton: true,
-                denyButtonText: 'Войти',
                 focusConfirm: false,
                 allowOutsideClick: false,
                 allowEscapeKey: false,
@@ -769,41 +768,37 @@ let ILVue = new Vue({
                     } return { email: email, password: password, fullName: fullName, school: school, yourClass: yourClass }
                 }
             }).then((result) => {
-                if (result.isDenied) {
-                    this.signInTeacher();
-                } else {
-                    firebase.auth().createUserWithEmailAndPassword(result.value.email, result.value.password).then((userCredential) => {
-                        firebase.database().ref(`school${result.value.school}/teachers/teacher${userCredential.user.uid}`).set({
-                            fullName: result.value.fullName,
-                            school: result.value.school,
-                            teacherClass: result.value.yourClass,
-                            id: userCredential.user.uid,
-                            isOnline: true,
-                        });
-    
-                        localStorage.setItem('user', JSON.stringify({
-                            who: 'teacher',
-                            fullName: result.value.fullName,
-                            school: result.value.school,
-                            myClass: result.value.yourClass,
-                            code: userCredential.user.uid,
-                        }));
-    
-                        ILVue.logIn = true;
-                        ILVue.currentUser = 'teacher';
-                        document.querySelector('.main-app-teacher').style.display = 'block';
-                        
-                        document.getElementById('myClassTitle').innerHTML += result.value.yourClass;
-    
-                        setTimeout(() => location.reload(), 2000)
-                    }).catch((error) => {
-                        console.log(error);
-                        Swal.fire({
-                            icon: 'error',
-                            text: 'Ошибка создания аккаунта. Возможно аккаунт с таким Email уже существует!',
-                        })    
+                firebase.auth().createUserWithEmailAndPassword(result.value.email, result.value.password).then((userCredential) => {
+                    firebase.database().ref(`school${result.value.school}/teachers/teacher${userCredential.user.uid}`).set({
+                        fullName: result.value.fullName,
+                        school: result.value.school,
+                        teacherClass: result.value.yourClass,
+                        id: userCredential.user.uid,
+                        isOnline: true,
                     });
-                }
+
+                    localStorage.setItem('user', JSON.stringify({
+                        who: 'teacher',
+                        fullName: result.value.fullName,
+                        school: result.value.school,
+                        myClass: result.value.yourClass,
+                        code: userCredential.user.uid,
+                    }));
+
+                    ILVue.logIn = true;
+                    ILVue.currentUser = 'teacher';
+                    document.querySelector('.main-app-teacher').style.display = 'block';
+                    
+                    document.getElementById('myClassTitle').innerHTML += result.value.yourClass;
+
+                    setTimeout(() => location.reload(), 2000)
+                }).catch((error) => {
+                    console.log(error);
+                    Swal.fire({
+                        icon: 'error',
+                        text: 'Ошибка создания аккаунта. Возможно аккаунт с таким Email уже существует!',
+                    })    
+                });
             });
         },
 
@@ -814,8 +809,8 @@ let ILVue = new Vue({
                     <input type="email" id="emailTeacherSignIn" class="swal2-input" placeholder="Email">
                     <input type="password" id="passwordTeacherSignIn" class="swal2-input" placeholder="Пароль">
                     <input type="text" id="fullNameTeacherSignIn" class="swal2-input" placeholder="Имя и Фамилия">
-                    <input type="text" id="schoolTeacherSignIn" class="swal2-input" placeholder="Школа">
-                    <input type="text" id="klassTeacherSignIn" class="swal2-input" placeholder="Ваш класс">`,
+                    <input type="text" id="schoolTeacherSignIn" class="swal2-input" placeholder="Школа (Пример: 192)">
+                    <input type="text" id="klassTeacherSignIn" class="swal2-input" placeholder="Ваш класс (Пример: 10А)">`,
                 confirmButtonText: 'Войти',
                 focusConfirm: false,
                 allowOutsideClick: false,
@@ -900,11 +895,10 @@ let ILVue = new Vue({
                     <input type="email" id="emailSignUpStudent" class="swal2-input" placeholder="Email">
                     <input type="password" id="passwordSignUpStudent" class="swal2-input" placeholder="Пароль">
                     <input type="text" id="fullNameSignUpStudent" class="swal2-input" placeholder="Имя и Фамилия">
-                    <input type="text" id="schoolSignUpStudent" class="swal2-input" placeholder="Школа">
-                    <input type="text" id="klassSignUpStudent" class="swal2-input" placeholder="Класс (С буквой)">`,
+                    <input type="text" id="schoolSignUpStudent" class="swal2-input" placeholder="Школа (Пример: 192)">
+                    <input type="text" id="klassSignUpStudent" class="swal2-input" placeholder="Класс (Пример: 10А)">`,
                 confirmButtonText: 'Далее',
                 showDenyButton: true,
-                denyButtonText: 'Войти',
                 focusConfirm: false,
                 allowOutsideClick: false,
                 allowEscapeKey: false,
@@ -919,39 +913,35 @@ let ILVue = new Vue({
                     } return { email: email, password: password, fullName: fullName, school: school, klass: klass }
                 }
             }).then((result) => {
-                if (result.isDenied) {
-                    this.signInStudent();
-                } else {
-                    firebase.auth().createUserWithEmailAndPassword(result.value.email, result.value.password).then((userCredential) => {
-                        firebase.database().ref(`school${result.value.school}/students/student${result.value.fullName.toLowerCase().trim()} ${result.value.klass.toLowerCase().trim()}`).set({
-                            fullName: result.value.fullName,
-                            school: result.value.school,
-                            klass: result.value.klass,
-                            id: userCredential.user.uid,
-                            isOnline: true,
-                        });
-    
-                        localStorage.setItem('user', JSON.stringify({
-                            who: 'student',
-                            fullName: result.value.fullName,
-                            school: result.value.school,
-                            klass: result.value.klass,
-                            isOnline: true,
-                        }));
-    
-                        ILVue.logIn = true;
-                        ILVue.currentUser = 'student';
-                        document.querySelector('.main-app-student').style.display = 'block';
-                        
-                        setTimeout(() => location.reload(), 2000);
-                    }).catch((error) => {
-                        console.log(error);
-                        Swal.fire({
-                            icon: 'error',
-                            text: 'Ошибка создания аккаунта. Возможно аккаунт с таким Email уже существует!',
-                        })
+                firebase.auth().createUserWithEmailAndPassword(result.value.email, result.value.password).then((userCredential) => {
+                    firebase.database().ref(`school${result.value.school}/students/student${result.value.fullName.toLowerCase().trim()} ${result.value.klass.toLowerCase().trim()}`).set({
+                        fullName: result.value.fullName,
+                        school: result.value.school,
+                        klass: result.value.klass,
+                        id: userCredential.user.uid,
+                        isOnline: true,
+                    });
+
+                    localStorage.setItem('user', JSON.stringify({
+                        who: 'student',
+                        fullName: result.value.fullName,
+                        school: result.value.school,
+                        klass: result.value.klass,
+                        isOnline: true,
+                    }));
+
+                    ILVue.logIn = true;
+                    ILVue.currentUser = 'student';
+                    document.querySelector('.main-app-student').style.display = 'block';
+                    
+                    setTimeout(() => location.reload(), 2000);
+                }).catch((error) => {
+                    console.log(error);
+                    Swal.fire({
+                        icon: 'error',
+                        text: 'Ошибка создания аккаунта. Возможно аккаунт с таким Email уже существует!',
                     })
-                }
+                })
             });
         },
 
@@ -962,11 +952,10 @@ let ILVue = new Vue({
                     <input type="email" id="emailSignInStudent" class="swal2-input" placeholder="Email">
                     <input type="password" id="passwordSignInStudent" class="swal2-input" placeholder="Пароль">
                     <input type="text" id="fullNameSignInStudent" class="swal2-input" placeholder="Имя и Фамилия">
-                    <input type="text" id="schoolSignInStudent" class="swal2-input" placeholder="Школа">
-                    <input type="text" id="klassSignInStudent" class="swal2-input" placeholder="Класс (С буквой)">`,
+                    <input type="text" id="schoolSignInStudent" class="swal2-input" placeholder="Школа (Пример: 192)">
+                    <input type="text" id="klassSignInStudent" class="swal2-input" placeholder="Класс (Пример: 10А)">`,
                 confirmButtonText: 'Далее',
                 showDenyButton: true,
-                denyButtonText: 'Зарегистрироваться',
                 focusConfirm: false,
                 allowOutsideClick: false,
                 allowEscapeKey: false,
@@ -981,64 +970,60 @@ let ILVue = new Vue({
                     } return { fullName: fullName, school: school, klass: klass, email: email, password: password }
                 }
             }).then((result) => {
-                if (result.isDenied) {
-                    this.signUpStudent();
-                } else {
-                    firebase.auth().signInWithEmailAndPassword(result.value.email, result.value.password).then(() => {
-                        firebase.database().ref(`school${result.value.school}/students/student${result.value.fullName.toLowerCase().trim()} ${result.value.klass.toLowerCase().trim()}`).get().then((snapshot) => {
-                            if (snapshot.val() == null) {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Ошибка входа в аккаунт!',
-                                    text: 'Проверьте введенные данные!',
-                                    showDenyButton: true,
-                                    denyButtonText: 'Зарегистрироваться',
-                                    focusConfirm: false,
-                                    allowOutsideClick: false,
-                                    allowEscapeKey: false,
-                                }).then((result) => {
-                                    if (result.isDenied) {
-                                        this.signUpStudent();
-                                    } else {
-                                        this.signInStudent();
-                                    }
-                                });
-                            } else {
-                                localStorage.setItem('user', JSON.stringify({
-                                    who: 'student',
-                                    fullName: result.value.fullName,
-                                    school: result.value.school,
-                                    klass: result.value.klass,
-                                }));
-    
-                                firebase.database().ref(`school${result.value.school}/students/student${result.value.fullName.toLowerCase().trim()} ${result.value.klass.toLowerCase().trim()}/isOnline`).set(true);
-                                ILVue.logIn = true;
-                                ILVue.currentUser = 'student';
-                                document.querySelector('.main-app-student').style.display = 'block';
-                                
-                                setTimeout(() => location.reload(), 2000)
-                            }
-                        });
-                    }).catch((error) => {
-                        console.log(error);
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Ошибка входа в аккаунт!',
-                            text: 'Проверьте введенные Email и пароль!',
-                            showDenyButton: true,
-                            denyButtonText: 'Зарегистрироваться',
-                            focusConfirm: false,
-                            allowOutsideClick: false,
-                            allowEscapeKey: false,
-                        }).then((result) => {
-                            if (result.isDenied) {
-                                this.signUpStudent();
-                            } else {
-                                this.signInStudent();
-                            }
-                        });
-                    })
-                }
+                firebase.auth().signInWithEmailAndPassword(result.value.email, result.value.password).then(() => {
+                    firebase.database().ref(`school${result.value.school}/students/student${result.value.fullName.toLowerCase().trim()} ${result.value.klass.toLowerCase().trim()}`).get().then((snapshot) => {
+                        if (snapshot.val() == null) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Ошибка входа в аккаунт!',
+                                text: 'Проверьте введенные данные!',
+                                showDenyButton: true,
+                                denyButtonText: 'Зарегистрироваться',
+                                focusConfirm: false,
+                                allowOutsideClick: false,
+                                allowEscapeKey: false,
+                            }).then((result) => {
+                                if (result.isDenied) {
+                                    this.signUpStudent();
+                                } else {
+                                    this.signInStudent();
+                                }
+                            });
+                        } else {
+                            localStorage.setItem('user', JSON.stringify({
+                                who: 'student',
+                                fullName: result.value.fullName,
+                                school: result.value.school,
+                                klass: result.value.klass,
+                            }));
+
+                            firebase.database().ref(`school${result.value.school}/students/student${result.value.fullName.toLowerCase().trim()} ${result.value.klass.toLowerCase().trim()}/isOnline`).set(true);
+                            ILVue.logIn = true;
+                            ILVue.currentUser = 'student';
+                            document.querySelector('.main-app-student').style.display = 'block';
+                            
+                            setTimeout(() => location.reload(), 2000)
+                        }
+                    });
+                }).catch((error) => {
+                    console.log(error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Ошибка входа в аккаунт!',
+                        text: 'Проверьте введенные Email и пароль!',
+                        showDenyButton: true,
+                        denyButtonText: 'Зарегистрироваться',
+                        focusConfirm: false,
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                    }).then((result) => {
+                        if (result.isDenied) {
+                            this.signUpStudent();
+                        } else {
+                            this.signInStudent();
+                        }
+                    });
+                })
             });
         },
 
@@ -1109,7 +1094,7 @@ function startTeacherApp() {
     firebase.database().ref(`school${user.school}/teachers/teacher${user.code}`).get().then((snapshot) => {
         const fullName = snapshot.val().fullName;
         const school = snapshot.val().school;
-        const klass = snapshot.val().teacherClass;
+        const klass = removeSpaces(snapshot.val().teacherClass);
 
         document.getElementById('profile-name').innerHTML = fullName;
         document.getElementById('profile-class').innerHTML = `Мой класс: ${klass}`;
@@ -1163,7 +1148,7 @@ function startTeacherApp() {
                 </div>
             `;
 
-            if (data.val().klass == user.myClass) {
+            if (removeSpaces(data.val().klass) == removeSpaces(user.myClass)) {
                 document.getElementById('myClassList').innerHTML += `<li class="list-group-item" data-bs-toggle="collapse" data-bs-target="[id='${data.val().id}']">${fullName}</li>`;
                 document.getElementById('studentsSchoolList').innerHTML += `<li class="list-group-item" data-bs-toggle="collapse" data-bs-target="[id='${data.val().id}']">${fullName}</li>`;
 
@@ -1171,7 +1156,7 @@ function startTeacherApp() {
                     <div class="collapse" id="${data.val().id}">
                         <div class="card card-body">
                             <p>Имя: ${fullName}</p>
-                            <p>Класс: ${data.val().klass}</p>
+                            <p>Класс: ${removeSpaces(data.val().klass)}</p>
                             <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#${data.val().id}">Личное дело</button>
                         </div>
                     </div>
@@ -1180,7 +1165,7 @@ function startTeacherApp() {
                     <div class="collapse" id="${data.val().id}">
                         <div class="card card-body">
                             <p>Имя: ${fullName}</p>
-                            <p>Класс: ${data.val().klass}</p>
+                            <p>Класс: ${removeSpaces(data.val().klass)}</p>
                             <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#${data.val().id}">Личное дело</button>
                         </div>
                     </div>
@@ -1191,7 +1176,7 @@ function startTeacherApp() {
                     <div class="collapse" id="${data.val().id}">
                         <div class="card card-body">
                             <p>Имя: ${fullName}</p>
-                            <p>Класс: ${data.val().klass}</p>
+                            <p>Класс: ${removeSpaces(data.val().klass)}</p>
                             <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#${data.val().id}">Личное дело</button>
                         </div>
                     </div>

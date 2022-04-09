@@ -1,8 +1,9 @@
 localStorage.getItem('user') == null ? location.href = "index.html" : console.log('ok');
 
 const user = JSON.parse(localStorage.getItem("user"));
+const klass = removeSpaces(user.klass);
 
-firebase.database().ref(`school${user.school}/schoolwork/lessons${user.klass}`).on('child_added', (data) => {
+firebase.database().ref(`school${user.school}/schoolwork/lessons${klass}`).on('child_added', (data) => {
     const lessonValue = data.val();
     
     document.getElementById('schoolwork').innerHTML += `
