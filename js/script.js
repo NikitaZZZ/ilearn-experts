@@ -554,6 +554,10 @@ Vue.component('teacher-app', {
     `,
 });
 
+function removeSpaces(str) {
+    return str.replace(/\s+/g, '');
+}
+
 // student transfer to the next year 
 function nextClassTeacher() {
     let currentClass = parseInt(user.myClass);
