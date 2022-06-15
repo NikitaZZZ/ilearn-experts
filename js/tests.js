@@ -2,7 +2,7 @@
 const user = JSON.parse(localStorage.getItem('user'));
 
 // Div для вставки тестов
-let testsInner = document.getElementById("tests-inner");
+let testsInner = document.getElementById('tests-inner');
 
 // Переменная для нумерации вопросов
 number_test = 0;
@@ -28,29 +28,38 @@ function removeSpaces(str) {
 const klass = removeSpaces(user.klass);
 
 // Скрывать пройденные тесты
-firebase.database().ref(`school${user.school}/tests/${klass}`).on('value', (snapshot) => {
-  for (let key in snapshot.val()) {
-    firebase.database().ref(`school${user.school}/tests/${klass}/${key}/results`).on('child_added', (data) => {
-      let testAcc = document.getElementById(`testAcc${data.val().idTest}`);
-      testAcc.parentNode.removeChild(testAcc);
-    });
-  }
-});
+firebase
+  .database()
+  .ref(`school${user.school}/tests/${klass}`)
+  .on('value', (snapshot) => {
+    for (let key in snapshot.val()) {
+      firebase
+        .database()
+        .ref(`school${user.school}/tests/${klass}/${key}/results`)
+        .on('child_added', (data) => {
+          let testAcc = document.getElementById(`testAcc${data.val().idTest}`);
+          testAcc.parentNode.removeChild(testAcc);
+        });
+    }
+  });
 
 // Вывод тестов
-firebase.database().ref(`school${user.school}/tests/${klass}`).on('child_added', (snapshot) => {
-  const id_db = snapshot.val().idTest;
-  const questions_db = snapshot.val().questions;
-  const subject_db = snapshot.val().subject;
-  const theme_db = snapshot.val().theme;
-  const qua_img_db = snapshot.val().qua_img;
+firebase
+  .database()
+  .ref(`school${user.school}/tests/${klass}`)
+  .on('child_added', (snapshot) => {
+    const id_db = snapshot.val().idTest;
+    const questions_db = snapshot.val().questions;
+    const subject_db = snapshot.val().subject;
+    const theme_db = snapshot.val().theme;
+    const qua_img_db = snapshot.val().qua_img;
 
-  question_number = -1;
-  image_number += 1;
+    question_number = -1;
+    image_number += 1;
 
-  testsNeed += 1;
+    testsNeed += 1;
 
-  testsInner.innerHTML += `
+    testsInner.innerHTML += `
     <div class="accordion" id="testAcc${id_db}">
         <div class="card">
             <div class="card-header" id="headingOne">
@@ -87,82 +96,79 @@ firebase.database().ref(`school${user.school}/tests/${klass}`).on('child_added',
     </div>
   `;
 
-  try {
-    timerNeed = doc.data().timer;
-    timerMassive.push({
-      test: id_db,
-      timerNeed: timerNeed,
-    });
+    try {
+      timerNeed = doc.data().timer;
+      timerMassive.push({
+        test: id_db,
+        timerNeed: timerNeed,
+      });
 
-    if (timerNeed === true) {
-      timerMinutes = doc.data().timerMinutes;
-      timerSeconds = doc.data().timerSeconds;
+      if (timerNeed === true) {
+        timerMinutes = doc.data().timerMinutes;
+        timerSeconds = doc.data().timerSeconds;
 
-      if (timerMinutes === '') {
-        if (timerSeconds.length === 1) {
-          const timerDiv = document.getElementById(`timerDiv${id_db}`);
-          timerDiv.innerHTML = `Таймер прохождения теста: 00:0${timerSeconds}`;
+        if (timerMinutes === '') {
+          if (timerSeconds.length === 1) {
+            const timerDiv = document.getElementById(`timerDiv${id_db}`);
+            timerDiv.innerHTML = `Таймер прохождения теста: 00:0${timerSeconds}`;
+          } else {
+            const timerDiv = document.getElementById(`timerDiv${id_db}`);
+            timerDiv.innerHTML = `Таймер прохождения теста: 00:${timerSeconds}`;
+          }
+        } else if (timerSeconds === '') {
+          if (timerSeconds.length === 1) {
+            const timerDiv = document.getElementById(`timerDiv${id_db}`);
+            timerDiv.innerHTML = `Таймер прохождения теста: ${timerMinutes}:00`;
+          } else {
+            const timerDiv = document.getElementById(`timerDiv${id_db}`);
+            timerDiv.innerHTML = `Таймер прохождения теста: ${timerMinutes}:00`;
+          }
         } else {
-          const timerDiv = document.getElementById(`timerDiv${id_db}`);
-          timerDiv.innerHTML = `Таймер прохождения теста: 00:${timerSeconds}`;
-        }
-      } else if (timerSeconds === '') {
-        if (timerSeconds.length === 1) {
-          const timerDiv = document.getElementById(`timerDiv${id_db}`);
-          timerDiv.innerHTML = `Таймер прохождения теста: ${timerMinutes}:00`;
-        } else {
-          const timerDiv = document.getElementById(`timerDiv${id_db}`);
-          timerDiv.innerHTML = `Таймер прохождения теста: ${timerMinutes}:00`;
+          if (timerSeconds.length === 1) {
+            const timerDiv = document.getElementById(`timerDiv${id_db}`);
+            timerDiv.innerHTML = `Таймер прохождения теста: ${timerMinutes}:0${timerSeconds}`;
+          } else {
+            const timerDiv = document.getElementById(`timerDiv${id_db}`);
+            timerDiv.innerHTML = `Таймер прохождения теста: ${timerMinutes}:${timerSeconds}`;
+          }
         }
       } else {
-        if (timerSeconds.length === 1) {
-          const timerDiv = document.getElementById(`timerDiv${id_db}`);
-          timerDiv.innerHTML = `Таймер прохождения теста: ${timerMinutes}:0${timerSeconds}`;
-        } else {
-          const timerDiv = document.getElementById(`timerDiv${id_db}`);
-          timerDiv.innerHTML = `Таймер прохождения теста: ${timerMinutes}:${timerSeconds}`;
-        }
       }
-    } else { }
-  } catch { }
+    } catch {}
 
-
-
-  // Cycle output imf for BIG test
-  for (let i = 0; i < qua_img_db; i++) {
-    if (theme_db == ("ЕГЭ" || "ОГЭ" || "ВПР")) {
-      document.getElementById(`collapsesQuestionsimg${id_db}`).innerHTML += `
+    // Cycle output imf for BIG test
+    for (let i = 0; i < qua_img_db; i++) {
+      if (theme_db == ('ЕГЭ' || 'ОГЭ' || 'ВПР')) {
+        document.getElementById(`collapsesQuestionsimg${id_db}`).innerHTML += `
             <img class="swiper-slide" alt="imageTest" id="image-test${id_db}${i}"/>
     `;
-
+      }
     }
-  }
 
-  // code for swiper intintial
-  const swiper = new Swiper('.swiper', {
-    // Optional parameters
-    //direction: 'vertical',
-    //loop: true,
+    // code for swiper intintial
+    const swiper = new Swiper('.swiper', {
+      // Optional parameters
+      //direction: 'vertical',
+      //loop: true,
 
-    pagination: {
-      el: ".swiper-pagination",
-      type: "progressbar",
-    },
-    navigation: {
-      nextEl: ".swiper-button-next",
-      prevEl: ".swiper-button-prev",
-    },
-  });
+      pagination: {
+        el: '.swiper-pagination',
+        type: 'progressbar',
+      },
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+      },
+    });
 
+    let question = document.getElementById(`test${id_db}`);
 
-  let question = document.getElementById(`test${id_db}`);
+    for (let i = 0; i < questions_db.length; i++) {
+      question_number += 1;
+      const current_question_number = question_number;
 
-  for (let i = 0; i < questions_db.length; i++) {
-    question_number += 1;
-    const current_question_number = question_number;
-
-    if (questions_db[question_number].option_1 != null) {
-      question.innerHTML += `
+      if (questions_db[question_number].option_1 != null) {
+        question.innerHTML += `
         <p class="lead" id="question">${questions_db[question_number].input_question}</p>
           
         <img alt="imageTest" class="img-fluid" width="400" height="400" id="image-test${question_number}">
@@ -191,8 +197,8 @@ firebase.database().ref(`school${user.school}/tests/${klass}`).on('child_added',
             </button>
         </div>
       `;
-    } else if (theme_db != ("ЕГЭ" || "ОГЭ" || "ВПР")) {
-      question.innerHTML += `
+      } else if (theme_db != ('ЕГЭ' || 'ОГЭ' || 'ВПР')) {
+        question.innerHTML += `
         <p class="lead" id="question">${questions_db[question_number].input_question}</p>
           
         <img alt="imageTest" class="img-fluid" width="400" height="400" id="image-test${question_number}">
@@ -209,8 +215,8 @@ firebase.database().ref(`school${user.school}/tests/${klass}`).on('child_added',
             </button>
         </div>
       `;
-    } else if (theme_db == ("ЕГЭ" || "ОГЭ" || "ВПР")) {
-      question.innerHTML += `
+      } else if (theme_db == ('ЕГЭ' || 'ОГЭ' || 'ВПР')) {
+        question.innerHTML += `
         <p class="lead" id="question">${questions_db[question_number].input_question}</p>
           
         <div class="form-check" id="input_answer_div">
@@ -225,134 +231,150 @@ firebase.database().ref(`school${user.school}/tests/${klass}`).on('child_added',
             </button>
         </div>
       `;
-    }
+      }
 
-    //  Loading img for BIG test for EGE
-    for (let i = 0; i < qua_img_db; i++) {
-      let imageBIG = firebase.storage().ref(`/test${id_db}/question${i}`);
-      if (theme_db == ("ЕГЭ" || "ОГЭ" || "ВПР")) {
+      //  Loading img for BIG test for EGE
+      for (let i = 0; i < qua_img_db; i++) {
+        let imageBIG = firebase.storage().ref(`/test${id_db}/question${i}`);
+        if (theme_db == ('ЕГЭ' || 'ОГЭ' || 'ВПР')) {
+          imageBIG
+            .getDownloadURL()
+            .then((url) => {
+              let image_test = document.getElementById(`image-test${id_db}${i}`);
+              image_test.src = url;
+            })
+            .catch((error) => {
+              switch (error.code) {
+                case 'storage/object-not-found':
+                  let image_test_onf = document.getElementById(`image-test${id_db}`);
+                  image_test_onf.parentNode.removeChild(image_test_onf);
+                  break;
 
-        imageBIG.getDownloadURL().then((url) => {
-          let image_test = document.getElementById(`image-test${id_db}${i}`);
-          image_test.src = url;
-        }).catch((error) => {
-          switch (error.code) {
-            case 'storage/object-not-found':
-              let image_test_onf = document.getElementById(`image-test${id_db}`);
-              image_test_onf.parentNode.removeChild(image_test_onf);
-              break;
+                case 'storage/unauthorized':
+                  let image_test_uaz = document.getElementById(`image-test${id_db}`);
+                  image_test_uaz.parentNode.removeChild(image_test_uaz);
+                  break;
+                case 'storage/canceled':
+                  let image_test_ccd = document.getElementById(`image-test${id_db}`);
+                  image_test_ccd.parentNode.removeChild(image_test_ccd);
+                  break;
+                case 'storage/unknown':
+                  let image_test_unk = document.getElementById(`image-test${id_db}`);
+                  image_test_unk.parentNode.removeChild(image_test_unk);
+                  break;
+              }
+            });
+        }
+      }
 
-            case 'storage/unauthorized':
-              let image_test_uaz = document.getElementById(`image-test${id_db}`);
-              image_test_uaz.parentNode.removeChild(image_test_uaz);
-              break;
-            case 'storage/canceled':
-              let image_test_ccd = document.getElementById(`image-test${id_db}`);
-              image_test_ccd.parentNode.removeChild(image_test_ccd);
-              break;
-            case 'storage/unknown':
-              let image_test_unk = document.getElementById(`image-test${id_db}`);
-              image_test_unk.parentNode.removeChild(image_test_unk);
-              break;
-          }
-        });
-
+      // Loading img for normal test
+      let image = firebase.storage().ref(`/test${id_db}/question${question_number}`);
+      if (theme_db != ('ЕГЭ' || 'ОГЭ' || 'ВПР')) {
+        image
+          .getDownloadURL()
+          .then((url) => {
+            let image_test = document.getElementById(`image-test${current_question_number}`);
+            image_test.src = url;
+          })
+          .catch((error) => {
+            switch (error.code) {
+              case 'storage/object-not-found':
+                let image_test_onf = document.getElementById(
+                  `image-test${current_question_number}`,
+                );
+                image_test_onf.parentNode.removeChild(image_test_onf);
+                break;
+              case 'storage/unauthorized':
+                let image_test_uaz = document.getElementById(
+                  `image-test${current_question_number}`,
+                );
+                image_test_uaz.parentNode.removeChild(image_test_uaz);
+                break;
+              case 'storage/canceled':
+                let image_test_ccd = document.getElementById(
+                  `image-test${current_question_number}`,
+                );
+                image_test_ccd.parentNode.removeChild(image_test_ccd);
+                break;
+              case 'storage/unknown':
+                let image_test_unk = document.getElementById(
+                  `image-test${current_question_number}`,
+                );
+                image_test_unk.parentNode.removeChild(image_test_unk);
+                break;
+            }
+          });
       }
     }
-
-    // Loading img for normal test
-    let image = firebase.storage().ref(`/test${id_db}/question${question_number}`);
-    if (theme_db != ("ЕГЭ" || "ОГЭ" || "ВПР")) {
-      image.getDownloadURL().then((url) => {
-        let image_test = document.getElementById(`image-test${current_question_number}`);
-        image_test.src = url;
-      }).catch((error) => {
-        switch (error.code) {
-          case 'storage/object-not-found':
-            let image_test_onf = document.getElementById(`image-test${current_question_number}`);
-            image_test_onf.parentNode.removeChild(image_test_onf);
-            break;
-          case 'storage/unauthorized':
-            let image_test_uaz = document.getElementById(`image-test${current_question_number}`);
-            image_test_uaz.parentNode.removeChild(image_test_uaz);
-            break;
-          case 'storage/canceled':
-            let image_test_ccd = document.getElementById(`image-test${current_question_number}`);
-            image_test_ccd.parentNode.removeChild(image_test_ccd);
-            break;
-          case 'storage/unknown':
-            let image_test_unk = document.getElementById(`image-test${current_question_number}`);
-            image_test_unk.parentNode.removeChild(image_test_unk);
-            break;
-        }
-      });
-    }
-  }
-});
+  });
 
 function checkTimer(id) {
-  firebase.database().ref(`school${user.school}/tests/${klass}/test${id}`).on('value', (snapshot) => {
-    let timerMinutesTest = snapshot.val().timerMinutes;
-    let timerSecondsTest = snapshot.val().timerSeconds;
-    let timerNeed = snapshot.val().timer;
-    let time = 0;
+  firebase
+    .database()
+    .ref(`school${user.school}/tests/${klass}/test${id}`)
+    .on('value', (snapshot) => {
+      let timerMinutesTest = snapshot.val().timerMinutes;
+      let timerSecondsTest = snapshot.val().timerSeconds;
+      let timerNeed = snapshot.val().timer;
+      let time = 0;
 
-    if (timerNeed === true) {
-      Swal.fire({
-        icon: 'info',
-        title: 'Осторожно!',
-        text: 'При нажатии ОК - Таймер начнет обратный отсчет',
-        showDenyButton: true,
-        denyButtonText: 'Назад',
-        allowOutsideClick: false,
-        allowEscapeKey: false,
-      }).then((result) => {
-        if (result.isConfirmed) {
-          if (parseInt(timerSecondsTest) === 0) {
-            time = (parseInt(timerMinutesTest) * 60) * 1000;
-          } else {
-            time = (parseInt(timerMinutesTest) * 60000) + parseInt(timerSecondsTest) * 1000;
-          }
-
-          let timerTest = setTimeout(() => {
-            clearInterval(intervalTimer);
-            send_test(id, `${user.fullName}`);
-            $(`#testAcc${id}`).collapse('hide');
-
-            localStorage.setItem(`testPass${id}`, `${id}`);
-
-            let btnSendTest = document.getElementById(`send-test${id}`);
-            btnSendTest.disabled = true;
-          }, time);
-
-          let intervalTimer = setInterval(() => {
-            if (timerSecondsTest === 0) {
-              timerMinutesTest -= 1;
-              timerSecondsTest = 60;
-            }
-
-            if (parseInt(timerMinutesTest) === 0 && parseInt(timerSecondsTest) === 3) {
-              localStorage.setItem(`testPass${id}`, `${id}`);
-              stopTimer();
-            }
-
-            timerSecondsTest -= 1;
-
-            const timerDiv = document.getElementById(`timerDiv${id}`);
-            if (timerSecondsTest < 10) {
-              document.head.title = `${timerMinutesTest}:0${timerSecondsTest}`;
-              timerDiv.innerHTML = `Таймер прохождения теста: ${timerMinutesTest}:0${timerSecondsTest}`;
+      if (timerNeed === true) {
+        Swal.fire({
+          icon: 'info',
+          title: 'Осторожно!',
+          text: 'При нажатии ОК - Таймер начнет обратный отсчет',
+          showDenyButton: true,
+          denyButtonText: 'Назад',
+          allowOutsideClick: false,
+          allowEscapeKey: false,
+        }).then((result) => {
+          if (result.isConfirmed) {
+            if (parseInt(timerSecondsTest) === 0) {
+              time = parseInt(timerMinutesTest) * 60 * 1000;
             } else {
-              document.head.title = `${timerMinutesTest}:${timerSecondsTest}`;
-              timerDiv.innerHTML = `Таймер прохождения теста: ${timerMinutesTest}:${timerSecondsTest}`;
+              time = parseInt(timerMinutesTest) * 60000 + parseInt(timerSecondsTest) * 1000;
             }
-          }, 1000);
-        } else if (result.isDenied) {
-          $(`#collapse${id}`).collapse('hide');
-        }
-      });
-    } else { }
-  });
+
+            let timerTest = setTimeout(() => {
+              clearInterval(intervalTimer);
+              send_test(id, `${user.fullName}`);
+              $(`#testAcc${id}`).collapse('hide');
+
+              localStorage.setItem(`testPass${id}`, `${id}`);
+
+              let btnSendTest = document.getElementById(`send-test${id}`);
+              btnSendTest.disabled = true;
+            }, time);
+
+            let intervalTimer = setInterval(() => {
+              if (timerSecondsTest === 0) {
+                timerMinutesTest -= 1;
+                timerSecondsTest = 60;
+              }
+
+              if (parseInt(timerMinutesTest) === 0 && parseInt(timerSecondsTest) === 3) {
+                localStorage.setItem(`testPass${id}`, `${id}`);
+                stopTimer();
+              }
+
+              timerSecondsTest -= 1;
+
+              const timerDiv = document.getElementById(`timerDiv${id}`);
+              if (timerSecondsTest < 10) {
+                document.head.title = `${timerMinutesTest}:0${timerSecondsTest}`;
+                timerDiv.innerHTML = `Таймер прохождения теста: ${timerMinutesTest}:0${timerSecondsTest}`;
+              } else {
+                document.head.title = `${timerMinutesTest}:${timerSecondsTest}`;
+                timerDiv.innerHTML = `Таймер прохождения теста: ${timerMinutesTest}:${timerSecondsTest}`;
+              }
+            }, 1000);
+          } else if (result.isDenied) {
+            $(`#collapse${id}`).collapse('hide');
+          }
+        });
+      } else {
+      }
+    });
 }
 
 function stopTimer() {
@@ -363,5 +385,5 @@ function stopTimer() {
     setTimeout(() => {
       location.reload();
     }, 2500);
-  } catch { }
+  } catch {}
 }

@@ -1,596 +1,889 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="icon" href="img/pizap.png">
+  <head>
+    <meta charset="UTF-8" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="icon" href="img/pizap.png" />
     <link rel="stylesheet" href="https://unpkg.com/swiper@8/swiper-bundle.min.css" />
-    <link rel="stylesheet" href="libraries/upload-form-main/theme.css">
+    <link rel="stylesheet" href="libraries/upload-form-main/theme.css" />
     <title>ILearn - ITests</title>
-</head>
+  </head>
 
-<body>
+  <body>
     <nav class="navbar navbar-light bg-light">
-        <div class="container-fluid" id="navbar-tests">
-            <a class="navbar-brand" href="#">
-                <img src="img/pizap.png" width="30" height="30" loading="lazy">
-                ITests - Панель управления
-            </a>
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="dopOptions" role="button" data-bs-toggle="dropdown"
-                    aria-expanded="false">
-                    Доп. возможности
-                </a>
-                <ul class="dropdown-menu" aria-labelledby="dopOptions">
-                    <li><a class="nav-link" onclick="plus_fs()">Увеличить размер текста</a></li>
-                    <li><a class="nav-link" onclick="minus_fs()">Уменьшить размер текста</a></li>
-                    <li><a class="nav-link" onclick="location.reload()">Сбросить размер текста</a></li>
-                </ul>
-            </li>
-            <div class="d-flex">
-                <button class="btn btn-outline-danger" id="back" onclick="location.href='index.html'">Назад</button>
-            </div>
+      <div class="container-fluid" id="navbar-tests">
+        <a class="navbar-brand" href="#">
+          <img src="img/pizap.png" width="30" height="30" loading="lazy" />
+          ITests - Панель управления
+        </a>
+        <li class="nav-item dropdown">
+          <a
+            class="nav-link dropdown-toggle"
+            href="#"
+            id="dopOptions"
+            role="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            Доп. возможности
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="dopOptions">
+            <li><a class="nav-link" onclick="plus_fs()">Увеличить размер текста</a></li>
+            <li><a class="nav-link" onclick="minus_fs()">Уменьшить размер текста</a></li>
+            <li><a class="nav-link" onclick="location.reload()">Сбросить размер текста</a></li>
+          </ul>
+        </li>
+        <div class="d-flex">
+          <button class="btn btn-outline-danger" id="back" onclick="location.href='index.html'">
+            Назад
+          </button>
         </div>
+      </div>
     </nav>
 
     <div class="row" id="main">
-        <div class="col-2" id="link-tabs">
-            <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-                <a class="nav-link active" onclick="tests()" id="v-pills-tests-tab" data-bs-toggle="pill" href="#tests"
-                    role="tab" aria-controls="v-pills-tests" aria-selected="false">Тесты</a>
-                <a class="nav-link" onclick="resultsStudentsList()" id="v-pills-results-students-tab"
-                    data-bs-toggle="pill" href="#results_students" role="tab" aria-controls="v-pills-results-students"
-                    aria-selected="false">Результаты тестов</a>
-                <a class="nav-link" id="v-pills-create-test-tab" data-bs-toggle="pill" href="#createTest" role="tab"
-                    aria-controls="v-pills-tests" aria-selected="false">Создать тест</a>
-                <a class="nav-link" id="v-pills-create-big-test-tab" data-bs-toggle="pill" href="#createBIGTest"
-                    role="tab">Создать ЕГЭ/ОГЭ/ВПР тест</a>
-            </div>
+      <div class="col-2" id="link-tabs">
+        <div
+          class="nav flex-column nav-pills"
+          id="v-pills-tab"
+          role="tablist"
+          aria-orientation="vertical"
+        >
+          <a
+            class="nav-link active"
+            onclick="tests()"
+            id="v-pills-tests-tab"
+            data-bs-toggle="pill"
+            href="#tests"
+            role="tab"
+            aria-controls="v-pills-tests"
+            aria-selected="false"
+            >Тесты</a
+          >
+          <a
+            class="nav-link"
+            onclick="resultsStudentsList()"
+            id="v-pills-results-students-tab"
+            data-bs-toggle="pill"
+            href="#results_students"
+            role="tab"
+            aria-controls="v-pills-results-students"
+            aria-selected="false"
+            >Результаты тестов</a
+          >
+          <a
+            class="nav-link"
+            id="v-pills-create-test-tab"
+            data-bs-toggle="pill"
+            href="#createTest"
+            role="tab"
+            aria-controls="v-pills-tests"
+            aria-selected="false"
+            >Создать тест</a
+          >
+          <a
+            class="nav-link"
+            id="v-pills-create-big-test-tab"
+            data-bs-toggle="pill"
+            href="#createBIGTest"
+            role="tab"
+            >Создать ЕГЭ/ОГЭ/ВПР тест</a
+          >
         </div>
-        <div class="col-9">
-            <div class="tab-content" id="div_tests">
-                <div class="tab-pane active" id="tests" role="tabpanel" aria-labelledby="tests-tab">
-                    <div class="accordion" id="accordionExample">
-                        <div class="card">
-                            <div class="card-header" id="algebraCard">
-                                <h5 class="mb-0">
-                                    <button class="btn btn-link" type="button" data-bs-toggle="collapse"
-                                        data-bs-target="#algebra" aria-expanded="true" aria-controls="collapseOne">
-                                        Алгебра <span class="badge bg-primary" id="algebra-counter">0</span>
-                                    </button>
-                                </h5>
-                            </div>
-
-                            <div id="algebra" class="collapse subjectDivs" aria-labelledby="headingOne"></div>
-                        </div>
-                        <div class="card">
-                            <div class="card-header" id="mathCard">
-                                <h5 class="mb-0">
-                                    <button class="btn btn-link" type="button" data-bs-toggle="collapse"
-                                        data-bs-target="#math" aria-expanded="true" aria-controls="collapseOne">
-                                        Математика <span class="badge bg-primary" id="math-counter">0</span>
-                                    </button>
-                                </h5>
-                            </div>
-
-                            <div id="math" class="collapse subjectDivs" aria-labelledby="headingOne">
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-header" id="englishCard">
-                                <h5 class="mb-0">
-                                    <button class="btn btn-link" type="button" data-bs-toggle="collapse"
-                                        data-bs-target="#english" aria-expanded="true" aria-controls="collapseOne">
-                                        Английский язык <span class="badge bg-primary" id="english-counter">0</span>
-                                    </button>
-                                </h5>
-                            </div>
-
-                            <div id="english" class="collapse subjectDivs" aria-labelledby="headingOne">
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-header" id="biologyCard">
-                                <h5 class="mb-0">
-                                    <button class="btn btn-link" type="button" data-bs-toggle="collapse"
-                                        data-bs-target="#biology" aria-expanded="true" aria-controls="collapseOne">
-                                        Биология <span class="badge bg-primary" id="biology-counter">0</span>
-                                    </button>
-                                </h5>
-                            </div>
-
-                            <div id="biology" class="collapse subjectDivs" aria-labelledby="headingOne">
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-header" id="worldCard">
-                                <h5 class="mb-0">
-                                    <button class="btn btn-link" type="button" data-bs-toggle="collapse"
-                                        data-bs-target="#world" aria-expanded="true" aria-controls="collapseOne">
-                                        Окружающий мир <span class="badge bg-primary" id="world-counter">0</span>
-                                    </button>
-                                </h5>
-                            </div>
-
-                            <div id="world" class="collapse subjectDivs" aria-labelledby="headingOne">
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-header" id="geographyCard">
-                                <h5 class="mb-0">
-                                    <button class="btn btn-link" type="button" data-bs-toggle="collapse"
-                                        data-bs-target="#geography" aria-expanded="true" aria-controls="collapseOne">
-                                        География <span class="badge bg-primary" id="geography-counter">0</span>
-                                    </button>
-                                </h5>
-                            </div>
-
-                            <div id="geography" class="collapse subjectDivs" aria-labelledby="headingOne">
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-header" id="geometryCard">
-                                <h5 class="mb-0">
-                                    <button class="btn btn-link" type="button" data-bs-toggle="collapse"
-                                        data-bs-target="#geometry" aria-expanded="true" aria-controls="collapseOne">
-                                        Геометрия <span class="badge bg-primary" id="geometry-counter">0</span>
-                                    </button>
-                                </h5>
-                            </div>
-
-                            <div id="geometry" class="collapse subjectDivs" aria-labelledby="headingOne">
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-header" id="historyCard">
-                                <h5 class="mb-0">
-                                    <button class="btn btn-link" type="button" data-bs-toggle="collapse"
-                                        data-bs-target="#history" aria-expanded="true" aria-controls="collapseOne">
-                                        История <span class="badge bg-primary" id="history-counter">0</span>
-                                    </button>
-                                </h5>
-                            </div>
-
-                            <div id="history" class="collapse subjectDivs" aria-labelledby="headingOne">
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-header" id="literatureCard">
-                                <h5 class="mb-0">
-                                    <button class="btn btn-link" type="button" data-bs-toggle="collapse"
-                                        data-bs-target="#literature" aria-expanded="true" aria-controls="collapseOne">
-                                        Литература <span class="badge bg-primary" id="literature-counter">0</span>
-                                    </button>
-                                </h5>
-                            </div>
-
-                            <div id="literature" class="collapse subjectDivs" aria-labelledby="headingOne">
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-header" id="physicsCard">
-                                <h5 class="mb-0">
-                                    <button class="btn btn-link" type="button" data-bs-toggle="collapse"
-                                        data-bs-target="#physics" aria-expanded="true" aria-controls="collapseOne">
-                                        Физика <span class="badge bg-primary" id="physics-counter">0</span>
-                                    </button>
-                                </h5>
-                            </div>
-
-                            <div id="physics" class="collapse subjectDivs" aria-labelledby="headingOne">
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-header" id="chemistryCard">
-                                <h5 class="mb-0">
-                                    <button class="btn btn-link" type="button" data-bs-toggle="collapse"
-                                        data-bs-target="#alchemy" aria-expanded="true" aria-controls="collapseOne">
-                                        Химия <span class="badge bg-primary" id="alchemy-counter">0</span>
-                                    </button>
-                                </h5>
-                            </div>
-
-                            <div id="alchemy" class="collapse subjectDivs" aria-labelledby="headingOne"></div>
-                        </div>
-                        <div class="card">
-                            <div class="card-header" id="russianCard">
-                                <h5 class="mb-0">
-                                    <button class="btn btn-link" type="button" data-bs-toggle="collapse"
-                                        data-bs-target="#russian" aria-expanded="true" aria-controls="collapseOne">
-                                        Русский язык <span class="badge bg-primary" id="russian-counter">0</span>
-                                    </button>
-                                </h5>
-                            </div>
-
-                            <div id="russian" class="collapse subjectDivs" aria-labelledby="headingOne"></div>
-                        </div>
-                        <div class="card">
-                            <div class="card-header" id="lsfCard">
-                                <h5 class="mb-0">
-                                    <button class="btn btn-link" type="button" data-bs-toggle="collapse"
-                                        data-bs-target="#lsf" aria-expanded="true" aria-controls="collapseOne">
-                                        ОБЖ <span class="badge bg-primary" id="lsf-counter">0</span>
-                                    </button>
-                                </h5>
-                            </div>
-
-                            <div id="lsf" class="collapse subjectDivs" aria-labelledby="headingOne">
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-header" id="peCard">
-                                <h5 class="mb-0">
-                                    <button class="btn btn-link" type="button" data-bs-toggle="collapse"
-                                        data-bs-target="#pe" aria-expanded="true" aria-controls="collapseOne">
-                                        Физическая культура <span class="badge bg-primary" id="pe-counter">0</span>
-                                    </button>
-                                </h5>
-                            </div>
-
-                            <div id="pe" class="collapse subjectDivs" aria-labelledby="headingOne">
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-header" id="techCard">
-                                <h5 class="mb-0">
-                                    <button class="btn btn-link" type="button" data-bs-toggle="collapse"
-                                        data-bs-target="#tech" aria-expanded="true" aria-controls="collapseOne">
-                                        Технология <span class="badge bg-primary" id="tech-counter">0</span>
-                                    </button>
-                                </h5>
-                            </div>
-
-                            <div id="tech" class="collapse subjectDivs" aria-labelledby="headingOne">
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-header" id="socialScienceCard">
-                                <h5 class="mb-0">
-                                    <button class="btn btn-link" type="button" data-bs-toggle="collapse"
-                                        data-bs-target="#ss" aria-expanded="true" aria-controls="collapseOne">
-                                        Обществознание <span class="badge bg-primary" id="ss-counter">0</span>
-                                    </button>
-                                </h5>
-                            </div>
-
-                            <div id="ss" class="collapse subjectDivs" aria-labelledby="headingOne">
-
-                            </div>
-                        </div>
-                        <div class="card">
-                            <div class="card-header" id="itCard">
-                                <h5 class="mb-0">
-                                    <button class="btn btn-link" type="button" data-bs-toggle="collapse"
-                                        data-bs-target="#it" aria-expanded="true" aria-controls="collapseOne">
-                                        Информатика <span class="badge bg-primary" id="it-counter">0</span>
-                                    </button>
-                                </h5>
-                            </div>
-
-                            <div id="it" class="collapse subjectDivs" aria-labelledby="headingOne"></div>
-                        </div>
-                    </div>
+      </div>
+      <div class="col-9">
+        <div class="tab-content" id="div_tests">
+          <div class="tab-pane active" id="tests" role="tabpanel" aria-labelledby="tests-tab">
+            <div class="accordion" id="accordionExample">
+              <div class="card">
+                <div class="card-header" id="algebraCard">
+                  <h5 class="mb-0">
+                    <button
+                      class="btn btn-link"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#algebra"
+                      aria-expanded="true"
+                      aria-controls="collapseOne"
+                    >
+                      Алгебра <span class="badge bg-primary" id="algebra-counter">0</span>
+                    </button>
+                  </h5>
                 </div>
-                <div class="tab-pane fade" id="results_students" role="tabpanel" aria-labelledby="results-students-tab">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th scope="col">#</th>
-                                <th scope="col">Имя</th>
-                                <th scope="col">Класс</th>
-                                <th scope="col">Предмет</th>
-                                <th scope="col">Тема</th>
-                                <th scope="col">Дата</th>
-                                <th scope="col">Результат</th>
-                                <th scope="col">Удалить результат</th>
-                            </tr>
-                        </thead>
-                        <div class="d-flex justify-content-center">
-                            <form class="form my-2">
-                                <input class="form-control mr-sm-2 search" type="text" id="searchresultStudentName"
-                                    onkeyup="searchInput('resultStudentName')" placeholder="Поиск">
+
+                <div id="algebra" class="collapse subjectDivs" aria-labelledby="headingOne"></div>
+              </div>
+              <div class="card">
+                <div class="card-header" id="mathCard">
+                  <h5 class="mb-0">
+                    <button
+                      class="btn btn-link"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#math"
+                      aria-expanded="true"
+                      aria-controls="collapseOne"
+                    >
+                      Математика <span class="badge bg-primary" id="math-counter">0</span>
+                    </button>
+                  </h5>
+                </div>
+
+                <div id="math" class="collapse subjectDivs" aria-labelledby="headingOne"></div>
+              </div>
+              <div class="card">
+                <div class="card-header" id="englishCard">
+                  <h5 class="mb-0">
+                    <button
+                      class="btn btn-link"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#english"
+                      aria-expanded="true"
+                      aria-controls="collapseOne"
+                    >
+                      Английский язык <span class="badge bg-primary" id="english-counter">0</span>
+                    </button>
+                  </h5>
+                </div>
+
+                <div id="english" class="collapse subjectDivs" aria-labelledby="headingOne"></div>
+              </div>
+              <div class="card">
+                <div class="card-header" id="biologyCard">
+                  <h5 class="mb-0">
+                    <button
+                      class="btn btn-link"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#biology"
+                      aria-expanded="true"
+                      aria-controls="collapseOne"
+                    >
+                      Биология <span class="badge bg-primary" id="biology-counter">0</span>
+                    </button>
+                  </h5>
+                </div>
+
+                <div id="biology" class="collapse subjectDivs" aria-labelledby="headingOne"></div>
+              </div>
+              <div class="card">
+                <div class="card-header" id="worldCard">
+                  <h5 class="mb-0">
+                    <button
+                      class="btn btn-link"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#world"
+                      aria-expanded="true"
+                      aria-controls="collapseOne"
+                    >
+                      Окружающий мир <span class="badge bg-primary" id="world-counter">0</span>
+                    </button>
+                  </h5>
+                </div>
+
+                <div id="world" class="collapse subjectDivs" aria-labelledby="headingOne"></div>
+              </div>
+              <div class="card">
+                <div class="card-header" id="geographyCard">
+                  <h5 class="mb-0">
+                    <button
+                      class="btn btn-link"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#geography"
+                      aria-expanded="true"
+                      aria-controls="collapseOne"
+                    >
+                      География <span class="badge bg-primary" id="geography-counter">0</span>
+                    </button>
+                  </h5>
+                </div>
+
+                <div id="geography" class="collapse subjectDivs" aria-labelledby="headingOne"></div>
+              </div>
+              <div class="card">
+                <div class="card-header" id="geometryCard">
+                  <h5 class="mb-0">
+                    <button
+                      class="btn btn-link"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#geometry"
+                      aria-expanded="true"
+                      aria-controls="collapseOne"
+                    >
+                      Геометрия <span class="badge bg-primary" id="geometry-counter">0</span>
+                    </button>
+                  </h5>
+                </div>
+
+                <div id="geometry" class="collapse subjectDivs" aria-labelledby="headingOne"></div>
+              </div>
+              <div class="card">
+                <div class="card-header" id="historyCard">
+                  <h5 class="mb-0">
+                    <button
+                      class="btn btn-link"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#history"
+                      aria-expanded="true"
+                      aria-controls="collapseOne"
+                    >
+                      История <span class="badge bg-primary" id="history-counter">0</span>
+                    </button>
+                  </h5>
+                </div>
+
+                <div id="history" class="collapse subjectDivs" aria-labelledby="headingOne"></div>
+              </div>
+              <div class="card">
+                <div class="card-header" id="literatureCard">
+                  <h5 class="mb-0">
+                    <button
+                      class="btn btn-link"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#literature"
+                      aria-expanded="true"
+                      aria-controls="collapseOne"
+                    >
+                      Литература <span class="badge bg-primary" id="literature-counter">0</span>
+                    </button>
+                  </h5>
+                </div>
+
+                <div
+                  id="literature"
+                  class="collapse subjectDivs"
+                  aria-labelledby="headingOne"
+                ></div>
+              </div>
+              <div class="card">
+                <div class="card-header" id="physicsCard">
+                  <h5 class="mb-0">
+                    <button
+                      class="btn btn-link"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#physics"
+                      aria-expanded="true"
+                      aria-controls="collapseOne"
+                    >
+                      Физика <span class="badge bg-primary" id="physics-counter">0</span>
+                    </button>
+                  </h5>
+                </div>
+
+                <div id="physics" class="collapse subjectDivs" aria-labelledby="headingOne"></div>
+              </div>
+              <div class="card">
+                <div class="card-header" id="chemistryCard">
+                  <h5 class="mb-0">
+                    <button
+                      class="btn btn-link"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#alchemy"
+                      aria-expanded="true"
+                      aria-controls="collapseOne"
+                    >
+                      Химия <span class="badge bg-primary" id="alchemy-counter">0</span>
+                    </button>
+                  </h5>
+                </div>
+
+                <div id="alchemy" class="collapse subjectDivs" aria-labelledby="headingOne"></div>
+              </div>
+              <div class="card">
+                <div class="card-header" id="russianCard">
+                  <h5 class="mb-0">
+                    <button
+                      class="btn btn-link"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#russian"
+                      aria-expanded="true"
+                      aria-controls="collapseOne"
+                    >
+                      Русский язык <span class="badge bg-primary" id="russian-counter">0</span>
+                    </button>
+                  </h5>
+                </div>
+
+                <div id="russian" class="collapse subjectDivs" aria-labelledby="headingOne"></div>
+              </div>
+              <div class="card">
+                <div class="card-header" id="lsfCard">
+                  <h5 class="mb-0">
+                    <button
+                      class="btn btn-link"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#lsf"
+                      aria-expanded="true"
+                      aria-controls="collapseOne"
+                    >
+                      ОБЖ <span class="badge bg-primary" id="lsf-counter">0</span>
+                    </button>
+                  </h5>
+                </div>
+
+                <div id="lsf" class="collapse subjectDivs" aria-labelledby="headingOne"></div>
+              </div>
+              <div class="card">
+                <div class="card-header" id="peCard">
+                  <h5 class="mb-0">
+                    <button
+                      class="btn btn-link"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#pe"
+                      aria-expanded="true"
+                      aria-controls="collapseOne"
+                    >
+                      Физическая культура <span class="badge bg-primary" id="pe-counter">0</span>
+                    </button>
+                  </h5>
+                </div>
+
+                <div id="pe" class="collapse subjectDivs" aria-labelledby="headingOne"></div>
+              </div>
+              <div class="card">
+                <div class="card-header" id="techCard">
+                  <h5 class="mb-0">
+                    <button
+                      class="btn btn-link"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#tech"
+                      aria-expanded="true"
+                      aria-controls="collapseOne"
+                    >
+                      Технология <span class="badge bg-primary" id="tech-counter">0</span>
+                    </button>
+                  </h5>
+                </div>
+
+                <div id="tech" class="collapse subjectDivs" aria-labelledby="headingOne"></div>
+              </div>
+              <div class="card">
+                <div class="card-header" id="socialScienceCard">
+                  <h5 class="mb-0">
+                    <button
+                      class="btn btn-link"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#ss"
+                      aria-expanded="true"
+                      aria-controls="collapseOne"
+                    >
+                      Обществознание <span class="badge bg-primary" id="ss-counter">0</span>
+                    </button>
+                  </h5>
+                </div>
+
+                <div id="ss" class="collapse subjectDivs" aria-labelledby="headingOne"></div>
+              </div>
+              <div class="card">
+                <div class="card-header" id="itCard">
+                  <h5 class="mb-0">
+                    <button
+                      class="btn btn-link"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#it"
+                      aria-expanded="true"
+                      aria-controls="collapseOne"
+                    >
+                      Информатика <span class="badge bg-primary" id="it-counter">0</span>
+                    </button>
+                  </h5>
+                </div>
+
+                <div id="it" class="collapse subjectDivs" aria-labelledby="headingOne"></div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="tab-pane fade"
+            id="results_students"
+            role="tabpanel"
+            aria-labelledby="results-students-tab"
+          >
+            <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Имя</th>
+                  <th scope="col">Класс</th>
+                  <th scope="col">Предмет</th>
+                  <th scope="col">Тема</th>
+                  <th scope="col">Дата</th>
+                  <th scope="col">Результат</th>
+                  <th scope="col">Удалить результат</th>
+                </tr>
+              </thead>
+              <div class="d-flex justify-content-center">
+                <form class="form my-2">
+                  <input
+                    class="form-control mr-sm-2 search"
+                    type="text"
+                    id="searchresultStudentName"
+                    onkeyup="searchInput('resultStudentName')"
+                    placeholder="Поиск"
+                  />
+                </form>
+              </div>
+              <tbody id="results_students_table"></tbody>
+            </table>
+          </div>
+          <div class="tab-pane fade" id="createTest" role="tabpanel">
+            <div class="container-fluid" id="create_test">
+              <div class="row">
+                <div id="questions-links"></div>
+                <div class="mb-3" id="questions"></div>
+
+                <ul class="nav nav-pills mb-3" id="pills-tab">
+                  <li class="nav-item">
+                    <button
+                      class="btn"
+                      id="plus-question-icon"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#pills-plus"
+                      style="float: left"
+                    >
+                      Форма создания вопроса
+                    </button>
+                    <button
+                      class="btn btn-outline-success"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#pills-create"
+                      id="create-test-admin-btn"
+                    >
+                      Создать тест
+                    </button>
+                  </li>
+                </ul>
+
+                <div class="collapse show" id="pills-plus">
+                  <div class="tab-pane" role="tabpanel" aria-labelledby="pills-plus-tab">
+                    <div class="form" id="create-question">
+                      <div class="form-group row" id="create-question-text">
+                        <h3>Вопрос</h3>
+                        <input
+                          type="text"
+                          placeholder="Текст вопроса"
+                          class="form-control"
+                          id="input_question"
+                        />
+                      </div>
+                      <fieldset class="form-group" id="create-question-form">
+                        <ul class="nav nav-pills mt-3">
+                          <li class="nav-item" role="presentation">
+                            <button
+                              class="nav-link active"
+                              id="pills-answerOptions-tab"
+                              data-bs-toggle="pill"
+                              data-bs-target="#answerOptions"
+                              type="button"
+                              role="tab"
+                              aria-controls="pills-answerOptions"
+                              aria-selected="true"
+                              onclick="cCQ = false"
+                            >
+                              Варианты ответа
+                            </button>
+                          </li>
+                          <li class="nav-item" role="presentation">
+                            <button
+                              class="nav-link"
+                              id="pills-writtenResponse-tab"
+                              data-bs-toggle="pill"
+                              data-bs-target="#writtenResponse"
+                              type="button"
+                              role="tab"
+                              aria-controls="pills-writtenResponse"
+                              aria-selected="true"
+                              onclick="cCQ = true"
+                            >
+                              Письменный ответ
+                            </button>
+                          </li>
+                        </ul>
+                        <div class="tab-content">
+                          <div
+                            class="tab-pane fade active show mt-3"
+                            role="tabpanel"
+                            aria-labelledby="nav-answerOptions-tab"
+                            id="answerOptions"
+                          >
+                            <form id="answerOptions-form">
+                              <div class="form-check">
+                                <input
+                                  class="form-check-input"
+                                  type="radio"
+                                  name="gridRadios"
+                                  id="option_radio1"
+                                  value="option1"
+                                />
+                                <input
+                                  type="text"
+                                  placeholder="Первый вариант ответа"
+                                  class="form-control"
+                                  id="inputText1"
+                                />
+                                <br />
+                              </div>
+                              <div class="form-check">
+                                <input
+                                  class="form-check-input"
+                                  type="radio"
+                                  name="gridRadios"
+                                  id="option_radio2"
+                                  value="option1"
+                                />
+                                <input
+                                  type="text"
+                                  placeholder="Второй вариант ответа"
+                                  class="form-control"
+                                  id="inputText2"
+                                />
+                                <br />
+                              </div>
+                              <div class="form-check">
+                                <input
+                                  class="form-check-input"
+                                  type="radio"
+                                  name="gridRadios"
+                                  id="option_radio3"
+                                  value="option1"
+                                />
+                                <input
+                                  type="text"
+                                  placeholder="Третий вариант ответа"
+                                  class="form-control"
+                                  id="inputText3"
+                                />
+                                <br />
+                              </div>
+                              <div class="form-check">
+                                <input
+                                  class="form-check-input"
+                                  type="radio"
+                                  name="gridRadios"
+                                  id="option_radio4"
+                                  value="option1"
+                                />
+                                <input
+                                  type="text"
+                                  placeholder="Четвертый вариант ответа"
+                                  class="form-control"
+                                  id="inputText4"
+                                />
+                                <br />
+                              </div>
+
+                              <legend class="col-form-label col-sm-2 pt-0">Изображение:</legend>
+                              <div class="col-sm-10">
+                                <input type="file" id="files" />
+                                <div class="form-check">
+                                  <input
+                                    type="checkbox"
+                                    class="form-check-input"
+                                    id="checkbox_file"
+                                  />
+                                  <label
+                                    class="form-check-label"
+                                    id="checkbox_file_label"
+                                    for="checkbox_file"
+                                    >Без изображения</label
+                                  >
+                                </div>
+                              </div>
                             </form>
-                        </div>
-                        <tbody id="results_students_table"></tbody>
-                    </table>
-                </div>
-                <div class="tab-pane fade" id="createTest" role="tabpanel">
-                    <div class="container-fluid" id="create_test">
-                        <div class="row">
-                            <div id="questions-links"></div>
-                            <div class="mb-3" id="questions"></div>
+                          </div>
 
-                            <ul class="nav nav-pills mb-3" id="pills-tab">
-                                <li class="nav-item">
-                                    <button class="btn" id="plus-question-icon" data-bs-toggle="collapse"
-                                        data-bs-target="#pills-plus" style="float: left;">Форма создания
-                                        вопроса</button>
-                                    <button class="btn btn-outline-success" data-bs-toggle="collapse"
-                                        data-bs-target="#pills-create" id="create-test-admin-btn">Создать тест</button>
-                                </li>
-                            </ul>
-
-                            <div class="collapse show" id="pills-plus">
-                                <div class="tab-pane" role="tabpanel" aria-labelledby="pills-plus-tab">
-                                    <div class="form" id="create-question">
-                                        <div class="form-group row" id="create-question-text">
-                                            <h3>Вопрос</h3>
-                                            <input type="text" placeholder="Текст вопроса" class="form-control"
-                                                id="input_question">
-                                        </div>
-                                        <fieldset class="form-group" id="create-question-form">
-                                            <ul class="nav nav-pills mt-3">
-                                                <li class="nav-item" role="presentation">
-                                                    <button class="nav-link active" id="pills-answerOptions-tab"
-                                                        data-bs-toggle="pill" data-bs-target="#answerOptions"
-                                                        type="button" role="tab" aria-controls="pills-answerOptions"
-                                                        aria-selected="true" onclick="cCQ = false">Варианты
-                                                        ответа</button>
-                                                </li>
-                                                <li class="nav-item" role="presentation">
-                                                    <button class="nav-link" id="pills-writtenResponse-tab"
-                                                        data-bs-toggle="pill" data-bs-target="#writtenResponse"
-                                                        type="button" role="tab" aria-controls="pills-writtenResponse"
-                                                        aria-selected="true" onclick="cCQ = true">Письменный
-                                                        ответ</button>
-                                                </li>
-                                            </ul>
-                                            <div class="tab-content">
-                                                <div class="tab-pane fade active show mt-3" role="tabpanel"
-                                                    aria-labelledby="nav-answerOptions-tab" id="answerOptions">
-                                                    <form id="answerOptions-form">
-                                                        <div class="form-check">
-                                                            <input class="form-check-input" type="radio"
-                                                                name="gridRadios" id="option_radio1" value="option1">
-                                                            <input type="text" placeholder="Первый вариант ответа"
-                                                                class="form-control" id="inputText1">
-                                                            <br>
-                                                        </div>
-                                                        <div class="form-check">
-                                                            <input class="form-check-input" type="radio"
-                                                                name="gridRadios" id="option_radio2" value="option1">
-                                                            <input type="text" placeholder="Второй вариант ответа"
-                                                                class="form-control" id="inputText2">
-                                                            <br>
-                                                        </div>
-                                                        <div class="form-check">
-                                                            <input class="form-check-input" type="radio"
-                                                                name="gridRadios" id="option_radio3" value="option1">
-                                                            <input type="text" placeholder="Третий вариант ответа"
-                                                                class="form-control" id="inputText3">
-                                                            <br>
-                                                        </div>
-                                                        <div class="form-check">
-                                                            <input class="form-check-input" type="radio"
-                                                                name="gridRadios" id="option_radio4" value="option1">
-                                                            <input type="text" placeholder="Четвертый вариант ответа"
-                                                                class="form-control" id="inputText4">
-                                                            <br>
-                                                        </div>
-
-                                                        <legend class="col-form-label col-sm-2 pt-0">Изображение:
-                                                        </legend>
-                                                        <div class="col-sm-10">
-                                                            <input type="file" id="files" />
-                                                            <div class="form-check">
-                                                                <input type="checkbox" class="form-check-input"
-                                                                    id="checkbox_file">
-                                                                <label class="form-check-label" id="checkbox_file_label"
-                                                                    for="checkbox_file">Без изображения</label>
-                                                            </div>
-                                                        </div>
-                                                    </form>
-                                                </div>
-
-                                                <div class="tab-pane fade mt-3" role="tabpanel"
-                                                    aria-labelledby="nav-home-tab" id="writtenResponse">
-                                                    <form id="writtenResponse-form">
-                                                        <legend class="col-form-label col-sm-2 pt-0">Изображение:
-                                                        </legend>
-                                                        <div class="col-sm-10">
-                                                            <input type="file" id="files" />
-                                                            <div class="form-check">
-                                                                <input type="checkbox" class="form-check-input"
-                                                                    id="checkbox_file_written_answer">
-                                                                <label class="form-check-label" id="checkbox_file_label"
-                                                                    for="checkbox_file_written_answer">Без
-                                                                    изображения</label>
-                                                            </div>
-                                                        </div>
-
-                                                        <label for="form-check-label">Правильный ответ</label>
-                                                        <input type="text" class="form-control mt-2"
-                                                            placeholder="Введите сюда правильный ответ на вопрос"
-                                                            id="correct-answer">
-                                                    </form>
-                                                </div>
-                                            </div>
-
-
-                                            <button type="submit" class="btn btn-outline-success mt-3"
-                                                onclick="createQuestion()">Создать вопрос</button>
-                                        </fieldset>
-                                    </div>
+                          <div
+                            class="tab-pane fade mt-3"
+                            role="tabpanel"
+                            aria-labelledby="nav-home-tab"
+                            id="writtenResponse"
+                          >
+                            <form id="writtenResponse-form">
+                              <legend class="col-form-label col-sm-2 pt-0">Изображение:</legend>
+                              <div class="col-sm-10">
+                                <input type="file" id="files" />
+                                <div class="form-check">
+                                  <input
+                                    type="checkbox"
+                                    class="form-check-input"
+                                    id="checkbox_file_written_answer"
+                                  />
+                                  <label
+                                    class="form-check-label"
+                                    id="checkbox_file_label"
+                                    for="checkbox_file_written_answer"
+                                    >Без изображения</label
+                                  >
                                 </div>
-                            </div>
+                              </div>
 
-                            <div class="collapse" id="pills-create">
-                                <div class="tab-pane" role="tabpanel" aria-labelledby="pills-plus-tab">
-                                    <div class="container-fluid">
-                                        <label class="my-1 mr-2 mt-2 d-flex justify-content-center"
-                                            for="klass">Класс</label>
-                                        <input type="text" placeholder="Класс (с буквой)"
-                                            class="form-control w-25 m-auto" id="klass">
-
-                                        <label class="my-1 mr-2 mt-2 d-flex justify-content-center"
-                                            for="subject">Предмет</label>
-                                        <div class="w-25" style="margin: 0 auto;">
-                                            <select class="form-select my-1 mr-sm-2" id="subject">
-                                                <option>Алгебра</option>
-                                                <option>Математика</option>
-                                                <option>Английский язык</option>
-                                                <option>Биология</option>
-                                                <option>Окружающий мир</option>
-                                                <option>География</option>
-                                                <option>Геометрия</option>
-                                                <option>История</option>
-                                                <option>Литература</option>
-                                                <option>Физика</option>
-                                                <option>Химия</option>
-                                                <option>Русский язык</option>
-                                                <option>ОБЖ</option>
-                                                <option>Физическая культура</option>
-                                                <option>Технология</option>
-                                                <option>Обществознание</option>
-                                                <option>Информатика</option>
-                                            </select>
-                                        </div>
-                                        <label for="theme"
-                                            class="my-1 mr-2 mt-2 d-flex justify-content-center">Тема</label>
-                                        <input type="text" placeholder="Тема вопроса" class="form-control w-25 m-auto"
-                                            id="theme">
-
-                                        <div class="d-flex justify-content-center mt-2 form-check">
-                                            <input type="checkbox" placeholder="Таймер на тест" class="form-check-input"
-                                                id="timerNeed" onchange="timerTest(this)">
-                                            <label for="timerNeed" class="form-check-label ml-2">Таймер на тест</label>
-                                        </div>
-
-                                        <div id="inputTimerDiv"></div>
-
-                                        <div class="d-flex justify-content-center mt-3">
-                                            <button class="btn btn-outline-success"
-                                                onclick="createTest()">Создать</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                              <label for="form-check-label">Правильный ответ</label>
+                              <input
+                                type="text"
+                                class="form-control mt-2"
+                                placeholder="Введите сюда правильный ответ на вопрос"
+                                id="correct-answer"
+                              />
+                            </form>
+                          </div>
                         </div>
+
+                        <button
+                          type="submit"
+                          class="btn btn-outline-success mt-3"
+                          onclick="createQuestion()"
+                        >
+                          Создать вопрос
+                        </button>
+                      </fieldset>
                     </div>
+                  </div>
                 </div>
 
-                <!-- create test for EGE... -->
-                <div class="tab-pane fade" id="createBIGTest" role="tabpanel">
-                    <!-- <form id="answerOptions-form"> -->
-                    <!-- <form id="writtenResponse-form"> -->
+                <div class="collapse" id="pills-create">
+                  <div class="tab-pane" role="tabpanel" aria-labelledby="pills-plus-tab">
+                    <div class="container-fluid">
+                      <label class="my-1 mr-2 mt-2 d-flex justify-content-center" for="klass"
+                        >Класс</label
+                      >
+                      <input
+                        type="text"
+                        placeholder="Класс (с буквой)"
+                        class="form-control w-25 m-auto"
+                        id="klass"
+                      />
 
-                    <div id="questions-linksBIG"></div>
-                    <div class="mb-3" id="questionsBIG"></div>
+                      <label class="my-1 mr-2 mt-2 d-flex justify-content-center" for="subject"
+                        >Предмет</label
+                      >
+                      <div class="w-25" style="margin: 0 auto">
+                        <select class="form-select my-1 mr-sm-2" id="subject">
+                          <option>Алгебра</option>
+                          <option>Математика</option>
+                          <option>Английский язык</option>
+                          <option>Биология</option>
+                          <option>Окружающий мир</option>
+                          <option>География</option>
+                          <option>Геометрия</option>
+                          <option>История</option>
+                          <option>Литература</option>
+                          <option>Физика</option>
+                          <option>Химия</option>
+                          <option>Русский язык</option>
+                          <option>ОБЖ</option>
+                          <option>Физическая культура</option>
+                          <option>Технология</option>
+                          <option>Обществознание</option>
+                          <option>Информатика</option>
+                        </select>
+                      </div>
+                      <label for="theme" class="my-1 mr-2 mt-2 d-flex justify-content-center"
+                        >Тема</label
+                      >
+                      <input
+                        type="text"
+                        placeholder="Тема вопроса"
+                        class="form-control w-25 m-auto"
+                        id="theme"
+                      />
 
-                    <!-- <div class="form-group row">
+                      <div class="d-flex justify-content-center mt-2 form-check">
+                        <input
+                          type="checkbox"
+                          placeholder="Таймер на тест"
+                          class="form-check-input"
+                          id="timerNeed"
+                          onchange="timerTest(this)"
+                        />
+                        <label for="timerNeed" class="form-check-label ml-2">Таймер на тест</label>
+                      </div>
+
+                      <div id="inputTimerDiv"></div>
+
+                      <div class="d-flex justify-content-center mt-3">
+                        <button class="btn btn-outline-success" onclick="createTest()">
+                          Создать
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- create test for EGE... -->
+          <div class="tab-pane fade" id="createBIGTest" role="tabpanel">
+            <!-- <form id="answerOptions-form"> -->
+            <!-- <form id="writtenResponse-form"> -->
+
+            <div id="questions-linksBIG"></div>
+            <div class="mb-3" id="questionsBIG"></div>
+
+            <!-- <div class="form-group row">
                         <button class="btn btn-outline-success" data-bs-toggle="collapse" data-bs-target="#pills-create"
                             id="create-test-admin-btn">Создать тест</button>
                     </div> -->
 
-                    <div class="form-group row" id="create-question-text">
+            <div class="form-group row" id="create-question-text">
+              <button
+                class="btn btn-outline-success"
+                data-bs-toggle="collapse"
+                data-bs-target="#pills-createBIG"
+                id="create-test-admin-btn"
+                style="margin-bottom: 40px"
+              >
+                Создать тест
+              </button>
 
-                        <button class="btn btn-outline-success" data-bs-toggle="collapse"
-                            data-bs-target="#pills-createBIG" id="create-test-admin-btn"
-                            style="margin-bottom: 40px;">Создать тест</button>
-
-                        <!-- <form id="writtenResponse_formBIGimg">
+              <!-- <form id="writtenResponse_formBIGimg">
                             <legend class="col-form-label col-sm-2 pt-0">Изображение:
                             </legend>
                         </form> -->
-                        <!-- Using the library upload-form -->
-                        <div class="container-formup">
-                            <legend class="col-form-label col-sm-2 pt-0">Изображение:
-                            </legend>
-                            <div class="card">
-                                <input type="file" id="file-formup">
-                            </div>
-                        </div>
-
-                        <form id="writtenResponse-formBIG">
-                            <h3 style="margin-top:30px">Вопрос</h3>
-                            <input type="text" placeholder="Текст вопроса или номер вопроса" class="form-control"
-                                id="input_questionBIG">
-
-                            <label for="form-check-label" style="margin-top:20px">Правильный ответ</label>
-                            <input type="text" class="form-control mt-2"
-                                placeholder="Введите сюда правильный ответ на вопрос" id="correct-answer">
-                        </form>
-
-                        <button type="submit" class="btn btn-outline-success mt-3"
-                            onclick="createQuestionBIGTest()">Создать
-                            вопрос</button>
-
-                    </div>
-
-                    <div class="collapse" id="pills-createBIG">
-                        <div class="tab-pane" role="tabpanel" aria-labelledby="pills-plus-tab">
-                            <div class="container-fluid">
-                                <label class="my-1 mr-2 mt-2 d-flex justify-content-center" for="klass">Класс</label>
-                                <input type="text" placeholder="Класс (с буквой)" class="form-control w-25 m-auto"
-                                    id="klassBIG">
-
-                                <label class="my-1 mr-2 mt-2 d-flex justify-content-center"
-                                    for="subject">Предмет</label>
-                                <div class="w-25" style="margin: 0 auto;">
-                                    <select class="form-select my-1 mr-sm-2" id="subjectBIG">
-                                        <option>Алгебра</option>
-                                        <option>Математика</option>
-                                        <option>Английский язык</option>
-                                        <option>Биология</option>
-                                        <option>Окружающий мир</option>
-                                        <option>География</option>
-                                        <option>Геометрия</option>
-                                        <option>История</option>
-                                        <option>Литература</option>
-                                        <option>Физика</option>
-                                        <option>Химия</option>
-                                        <option>Русский язык</option>
-                                        <option>ОБЖ</option>
-                                        <option>Физическая культура</option>
-                                        <option>Технология</option>
-                                        <option>Обществознание</option>
-                                        <option>Информатика</option>
-                                    </select>
-                                </div>
-                                <label for="theme" class="my-1 mr-2 mt-2 d-flex justify-content-center">Тема</label>
-                                <!-- <input type="text" placeholder="Тема вопроса" class="form-control w-25 m-auto"
-                                    id="theme"> -->
-                                <div class="w-25" style="margin: 0 auto;">
-                                    <select class="form-select my-1 mr-sm-2" id="themeBIG">
-                                        <option>ЕГЭ</option>
-                                        <option>ОГЭ</option>
-                                        <option>ВПР</option>
-                                    </select>
-                                </div>
-
-                                <div class="d-flex justify-content-center mt-2 form-check">
-                                    <input type="checkbox" placeholder="Таймер на тест" class="form-check-input"
-                                        id="timerNeedBIG" onchange="timerTestBIG(this)">
-                                    <label for="timerNeedBIG" class="form-check-label ml-2">Таймер на тест</label>
-                                </div>
-
-                                <div id="inputTimerDivBIG"></div>
-
-                                <div class="d-flex justify-content-center mt-3">
-                                    <button class="btn btn-outline-success" onclick="createTestBIGdb()">Создать</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
+              <!-- Using the library upload-form -->
+              <div class="container-formup">
+                <legend class="col-form-label col-sm-2 pt-0">Изображение:</legend>
+                <div class="card">
+                  <input type="file" id="file-formup" />
                 </div>
+              </div>
 
+              <form id="writtenResponse-formBIG">
+                <h3 style="margin-top: 30px">Вопрос</h3>
+                <input
+                  type="text"
+                  placeholder="Текст вопроса или номер вопроса"
+                  class="form-control"
+                  id="input_questionBIG"
+                />
+
+                <label for="form-check-label" style="margin-top: 20px">Правильный ответ</label>
+                <input
+                  type="text"
+                  class="form-control mt-2"
+                  placeholder="Введите сюда правильный ответ на вопрос"
+                  id="correct-answer"
+                />
+              </form>
+
+              <button
+                type="submit"
+                class="btn btn-outline-success mt-3"
+                onclick="createQuestionBIGTest()"
+              >
+                Создать вопрос
+              </button>
             </div>
+
+            <div class="collapse" id="pills-createBIG">
+              <div class="tab-pane" role="tabpanel" aria-labelledby="pills-plus-tab">
+                <div class="container-fluid">
+                  <label class="my-1 mr-2 mt-2 d-flex justify-content-center" for="klass"
+                    >Класс</label
+                  >
+                  <input
+                    type="text"
+                    placeholder="Класс (с буквой)"
+                    class="form-control w-25 m-auto"
+                    id="klassBIG"
+                  />
+
+                  <label class="my-1 mr-2 mt-2 d-flex justify-content-center" for="subject"
+                    >Предмет</label
+                  >
+                  <div class="w-25" style="margin: 0 auto">
+                    <select class="form-select my-1 mr-sm-2" id="subjectBIG">
+                      <option>Алгебра</option>
+                      <option>Математика</option>
+                      <option>Английский язык</option>
+                      <option>Биология</option>
+                      <option>Окружающий мир</option>
+                      <option>География</option>
+                      <option>Геометрия</option>
+                      <option>История</option>
+                      <option>Литература</option>
+                      <option>Физика</option>
+                      <option>Химия</option>
+                      <option>Русский язык</option>
+                      <option>ОБЖ</option>
+                      <option>Физическая культура</option>
+                      <option>Технология</option>
+                      <option>Обществознание</option>
+                      <option>Информатика</option>
+                    </select>
+                  </div>
+                  <label for="theme" class="my-1 mr-2 mt-2 d-flex justify-content-center"
+                    >Тема</label
+                  >
+                  <!-- <input type="text" placeholder="Тема вопроса" class="form-control w-25 m-auto"
+                                    id="theme"> -->
+                  <div class="w-25" style="margin: 0 auto">
+                    <select class="form-select my-1 mr-sm-2" id="themeBIG">
+                      <option>ЕГЭ</option>
+                      <option>ОГЭ</option>
+                      <option>ВПР</option>
+                    </select>
+                  </div>
+
+                  <div class="d-flex justify-content-center mt-2 form-check">
+                    <input
+                      type="checkbox"
+                      placeholder="Таймер на тест"
+                      class="form-check-input"
+                      id="timerNeedBIG"
+                      onchange="timerTestBIG(this)"
+                    />
+                    <label for="timerNeedBIG" class="form-check-label ml-2">Таймер на тест</label>
+                  </div>
+
+                  <div id="inputTimerDivBIG"></div>
+
+                  <div class="d-flex justify-content-center mt-3">
+                    <button class="btn btn-outline-success" onclick="createTestBIGdb()">
+                      Создать
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
 
     <script src="https://kit.fontawesome.com/373834e38f.js" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/swiper@8/swiper-bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
-        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous">
-        </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous">
-        </script>
+    <script
+      src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+      integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4"
+      crossorigin="anonymous"
+    ></script>
     <script src="https://www.gstatic.com/firebasejs/8.4.2/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.4.2/firebase-analytics.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.4.2/firebase-database.js"></script>
@@ -602,86 +895,95 @@
     <script src="js/admin.js"></script>
     <script src="js/dopOptions.js"></script>
     <script>
-        const inputTimer = document.getElementById('inputTimerDiv');
-        const inputTimerBIG = document.getElementById('inputTimerDivBIG');
+      const inputTimer = document.getElementById('inputTimerDiv');
+      const inputTimerBIG = document.getElementById('inputTimerDivBIG');
 
-
-        function timerTest(elem) {
-            if (elem.checked) {
-                inputTimer.className = 'd-flex mt-2 justify-content-center form-group';
-                inputTimer.innerHTML = `
+      function timerTest(elem) {
+        if (elem.checked) {
+          inputTimer.className = 'd-flex mt-2 justify-content-center form-group';
+          inputTimer.innerHTML = `
                     <div class="d-flex mb-0 justify-content-center form-group">
                         <input type="text" class="w-25 ml-2 text-center" placeholder="Минуты" id="timerMinutes">
                         <input type="text" class="w-25 ml-2 text-center" placeholder="Секунды" id="timerSeconds">
                     </div>
                 `;
-            } else {
-                inputTimer.className = '';
-                inputTimer.innerHTML = ``;
-            }
+        } else {
+          inputTimer.className = '';
+          inputTimer.innerHTML = ``;
         }
+      }
 
-        function timerTestBIG(elem) {
-            // Time for BIG test for EGE
-            if (elem.checked) {
-                inputTimerBIG.className = 'd-flex mt-2 justify-content-center form-group';
-                inputTimerBIG.innerHTML = `
+      function timerTestBIG(elem) {
+        // Time for BIG test for EGE
+        if (elem.checked) {
+          inputTimerBIG.className = 'd-flex mt-2 justify-content-center form-group';
+          inputTimerBIG.innerHTML = `
                     <div class="d-flex mb-0 justify-content-center form-group">
                         <input type="text" class="w-25 ml-2 text-center" placeholder="Минуты" id="timerMinutes">
                         <input type="text" class="w-25 ml-2 text-center" placeholder="Секунды" id="timerSeconds">
                     </div>
                 `;
-            } else {
-                inputTimerBIG.className = '';
-                inputTimerBIG.innerHTML = ``;
-            }
+        } else {
+          inputTimerBIG.className = '';
+          inputTimerBIG.innerHTML = ``;
         }
+      }
 
-        // Удаление теста
-        function delete_test(id) {
-            db.collection('tests').doc(`${id}`).delete().then(() => {
-                document.getElementById(`test${id}`).innerHTML = '';
-            });
+      // Удаление теста
+      function delete_test(id) {
+        db.collection('tests')
+          .doc(`${id}`)
+          .delete()
+          .then(() => {
+            document.getElementById(`test${id}`).innerHTML = '';
+          });
 
-            tests();
-        }
+        tests();
+      }
 
-        // Удаление результата теста
-        function delete_result_test(id, name, surname) {
-            Swal.fire({
-                title: 'Как вы хотите удалить результат?',
-                icon: 'question',
-                showCancelButton: true,
-                showDenyButton: true,
-                denyButtonText: 'Дать пройти тест ученику еще раз',
-                confirmButtonText: 'Просто удалить',
-                cancelButtonText: 'Отмена',
-                allowOutsideClick: false,
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    db.collection('results').doc(`${id}${name}${surname}`).delete().then(() => {
-                        document.getElementById(`resultTest${id}`).innerHTML = '';
-                    });
-                } else if (result.isDenied) {
-                    db.collection('results').doc(`${id}${name}${surname}`).delete().then(() => {
-                        document.getElementById(`resultTest${id}`).innerHTML = '';
+      // Удаление результата теста
+      function delete_result_test(id, name, surname) {
+        Swal.fire({
+          title: 'Как вы хотите удалить результат?',
+          icon: 'question',
+          showCancelButton: true,
+          showDenyButton: true,
+          denyButtonText: 'Дать пройти тест ученику еще раз',
+          confirmButtonText: 'Просто удалить',
+          cancelButtonText: 'Отмена',
+          allowOutsideClick: false,
+        }).then((result) => {
+          if (result.isConfirmed) {
+            db.collection('results')
+              .doc(`${id}${name}${surname}`)
+              .delete()
+              .then(() => {
+                document.getElementById(`resultTest${id}`).innerHTML = '';
+              });
+          } else if (result.isDenied) {
+            db.collection('results')
+              .doc(`${id}${name}${surname}`)
+              .delete()
+              .then(() => {
+                document.getElementById(`resultTest${id}`).innerHTML = '';
 
-                        db.collection('testPass').doc(`${id}`).delete();
-                    });
-                } else { }
-            });
-        }
+                db.collection('testPass').doc(`${id}`).delete();
+              });
+          } else {
+          }
+        });
+      }
 
-        // Удаление ученика
-        function delete_student(fullName, school, klass) {
-            firebase.database().ref(`school${school}/students/student${fullName.toLowerCase()} ${klass.toLowerCase()}`)
-                .remove();
+      // Удаление ученика
+      function delete_student(fullName, school, klass) {
+        firebase
+          .database()
+          .ref(`school${school}/students/student${fullName.toLowerCase()} ${klass.toLowerCase()}`)
+          .remove();
 
-            const studentTr = document.getElementById(`student${fullName}`);
-            studentTr.parentNode.removeChild(studentTr);
-        }
-
+        const studentTr = document.getElementById(`student${fullName}`);
+        studentTr.parentNode.removeChild(studentTr);
+      }
     </script>
-</body>
-
+  </body>
 </html>

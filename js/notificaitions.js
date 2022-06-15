@@ -4,8 +4,11 @@ let list = [];
 let list_for = ['tests', 'schoolwork'];
 
 list_for.forEach((elem) => {
-    firebase.database().ref(`school${user.school}/${elem}/${user.klass}`).on('child_added', (snapshot) => list.push([snapshot.val()]));
-})
+  firebase
+    .database()
+    .ref(`school${user.school}/${elem}/${user.klass}`)
+    .on('child_added', (snapshot) => list.push([snapshot.val()]));
+});
 
 notifications_container.innerHTML += `
     <div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
@@ -20,4 +23,3 @@ notifications_container.innerHTML += `
         </div>
     </div>
 `;
-

@@ -1,11 +1,14 @@
-localStorage.getItem('user') == null ? location.href = "index.html" : console.log('ok');
+localStorage.getItem('user') == null ? (location.href = 'index.html') : console.log('ok');
 
-const user = JSON.parse(localStorage.getItem("user"));
+const user = JSON.parse(localStorage.getItem('user'));
 const klass = removeSpaces(user.klass);
 
-firebase.database().ref(`school${user.school}/schoolwork/lessons${klass}`).on('child_added', (data) => {
+firebase
+  .database()
+  .ref(`school${user.school}/schoolwork/lessons${klass}`)
+  .on('child_added', (data) => {
     const lessonValue = data.val();
-    
+
     document.getElementById('schoolwork').innerHTML += `
         <a data-bs-target="#modal${lessonValue.id}" data-bs-toggle="modal" style="cursor: pointer" class="list-group-item list-group-item-action">
             <div class="d-flex w-100 justify-content-between">
@@ -64,47 +67,54 @@ firebase.database().ref(`school${user.school}/schoolwork/lessons${klass}`).on('c
     `;
 
     text_of_lesson = [
-        {
-            elem: `#main-theses-list-${lessonValue.id}`,
-            array: lessonValue.listTheses
-        },
-        {
-            elem: `#tasks-text-list-${lessonValue.id}`,
-            array: lessonValue.listTasksText
-        }
-    ]
+      {
+        elem: `#main-theses-list-${lessonValue.id}`,
+        array: lessonValue.listTheses,
+      },
+      {
+        elem: `#tasks-text-list-${lessonValue.id}`,
+        array: lessonValue.listTasksText,
+      },
+    ];
 
     links_of_lesson = [
-        {
-            elem: `#tasks-link-list-${lessonValue.id}`,
-            array: lessonValue.listTasksLink
-        },
-        {
-            elem: `#links-to-conspects-list-${lessonValue.id}`,
-            array: lessonValue.listLinks
-        }
-    ]
+      {
+        elem: `#tasks-link-list-${lessonValue.id}`,
+        array: lessonValue.listTasksLink,
+      },
+      {
+        elem: `#links-to-conspects-list-${lessonValue.id}`,
+        array: lessonValue.listLinks,
+      },
+    ];
 
     text_of_lesson.forEach((text) => {
-        text.array.forEach((elem) => {
-            document.querySelector(text.elem).innerHTML += `<li class="list-group-item">${elem}</li>`;
-        });
+      text.array.forEach((elem) => {
+        document.querySelector(text.elem).innerHTML += `<li class="list-group-item">${elem}</li>`;
+      });
     });
 
     links_of_lesson.forEach((link) => {
-        link.array.forEach((elem) => {
-            if (elem.name == undefined) {
-                document.querySelector(link.elem).innerHTML += `<li class="list-group-item"><a href="${elem}" target="_blank">${elem}</a></li>`;
-            } else {
-                document.querySelector(link.elem).innerHTML += `<li class="list-group-item"><a href="${elem.link}" target="_blank">${elem.name}</a></li>`;
-            }
-        });
+      link.array.forEach((elem) => {
+        if (elem.name == undefined) {
+          document.querySelector(
+            link.elem,
+          ).innerHTML += `<li class="list-group-item"><a href="${elem}" target="_blank">${elem}</a></li>`;
+        } else {
+          document.querySelector(
+            link.elem,
+          ).innerHTML += `<li class="list-group-item"><a href="${elem.link}" target="_blank">${elem.name}</a></li>`;
+        }
+      });
     });
-});
+  });
 
-firebase.database().ref(`school${user.school}/schoolwork/lessons`).on('child_added', (data) => {
+firebase
+  .database()
+  .ref(`school${user.school}/schoolwork/lessons`)
+  .on('child_added', (data) => {
     const lessonValue = data.val();
-    
+
     document.getElementById('schoolwork').innerHTML += `
         <a data-bs-target="#modal${lessonValue.id}" data-bs-toggle="modal" style="cursor: pointer" class="list-group-item list-group-item-action">
             <div class="d-flex w-100 justify-content-between">
@@ -163,40 +173,44 @@ firebase.database().ref(`school${user.school}/schoolwork/lessons`).on('child_add
     `;
 
     text_of_lesson = [
-        {
-            elem: `#main-theses-list-${lessonValue.id}`,
-            array: lessonValue.listTheses
-        },
-        {
-            elem: `#tasks-text-list-${lessonValue.id}`,
-            array: lessonValue.listTasksText
-        }
-    ]
+      {
+        elem: `#main-theses-list-${lessonValue.id}`,
+        array: lessonValue.listTheses,
+      },
+      {
+        elem: `#tasks-text-list-${lessonValue.id}`,
+        array: lessonValue.listTasksText,
+      },
+    ];
 
     links_of_lesson = [
-        {
-            elem: `#tasks-link-list-${lessonValue.id}`,
-            array: lessonValue.listTasksLink
-        },
-        {
-            elem: `#links-to-conspects-list-${lessonValue.id}`,
-            array: lessonValue.listLinks
-        }
-    ]
+      {
+        elem: `#tasks-link-list-${lessonValue.id}`,
+        array: lessonValue.listTasksLink,
+      },
+      {
+        elem: `#links-to-conspects-list-${lessonValue.id}`,
+        array: lessonValue.listLinks,
+      },
+    ];
 
     text_of_lesson.forEach((text) => {
-        text.array.forEach((elem) => {
-            document.querySelector(text.elem).innerHTML += `<li class="list-group-item">${elem}</li>`;
-        });
+      text.array.forEach((elem) => {
+        document.querySelector(text.elem).innerHTML += `<li class="list-group-item">${elem}</li>`;
+      });
     });
 
     links_of_lesson.forEach((link) => {
-        link.array.forEach((elem) => {
-            if (elem.name == undefined) {
-                document.querySelector(link.elem).innerHTML += `<li class="list-group-item"><a href="${elem}" target="_blank">${elem}</a></li>`;
-            } else {
-                document.querySelector(link.elem).innerHTML += `<li class="list-group-item"><a href="${elem.link}" target="_blank">${elem.name}</a></li>`;
-            }
-        });
+      link.array.forEach((elem) => {
+        if (elem.name == undefined) {
+          document.querySelector(
+            link.elem,
+          ).innerHTML += `<li class="list-group-item"><a href="${elem}" target="_blank">${elem}</a></li>`;
+        } else {
+          document.querySelector(
+            link.elem,
+          ).innerHTML += `<li class="list-group-item"><a href="${elem.link}" target="_blank">${elem.name}</a></li>`;
+        }
+      });
     });
-})
+  });

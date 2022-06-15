@@ -1,37 +1,43 @@
 // check user from mobile or not
-const isMobile = /Mobile|webOS|BlackBerry|IEMobile|MeeGo|mini|Fennec|Windows Phone|Android|iP(ad|od|hone)/i.test(navigator.userAgent);
+const isMobile =
+  /Mobile|webOS|BlackBerry|IEMobile|MeeGo|mini|Fennec|Windows Phone|Android|iP(ad|od|hone)/i.test(
+    navigator.userAgent,
+  );
 
 // date
 const date = new Date();
 
 // window onload
 onload = () => {
-    // get user from localStorage
-    localStorage.setItem('user', JSON.stringify({ 
-        who: "teacher",
-        fullName: 'Эксперт',
-        myClass: '10А',
-        school: '192',
-        code: 'jiik4fi64vb7g7GY9euRcIYoDvY2'
-    }));
+  // get user from localStorage
+  localStorage.setItem(
+    'user',
+    JSON.stringify({
+      who: 'teacher',
+      fullName: 'Эксперт',
+      myClass: '10А',
+      school: '192',
+      code: 'jiik4fi64vb7g7GY9euRcIYoDvY2',
+    }),
+  );
 
-    let user = JSON.parse(localStorage.getItem('user'));
+  let user = JSON.parse(localStorage.getItem('user'));
 
-    firebase.auth().signInWithEmailAndPassword('expert@gmail.com', 'expert123');
+  firebase.auth().signInWithEmailAndPassword('expert@gmail.com', 'expert123');
 
-    ILVue.logIn = true;
-    ILVue.currentUser = 'teacher';
-    document.querySelector('.main-app-teacher').style.display = 'block';
-    document.getElementById('myClassTitle').innerHTML += user.myClass;
-    startTeacherApp();
-    getToDoList();
-    innerNews();
-    chatWithStudents();
-}
+  ILVue.logIn = true;
+  ILVue.currentUser = 'teacher';
+  document.querySelector('.main-app-teacher').style.display = 'block';
+  document.getElementById('myClassTitle').innerHTML += user.myClass;
+  startTeacherApp();
+  getToDoList();
+  innerNews();
+  chatWithStudents();
+};
 
 // teacher component
 Vue.component('teacher-app', {
-    template: `
+  template: `
         <div class="container mt-3 main-app-teacher" style="display: none;">
             <div class="row">
                 <div class="col-sm mt-3" id="profile">
@@ -555,82 +561,84 @@ Vue.component('teacher-app', {
 });
 
 function removeSpaces(str) {
-    return str.replace(/\s+/g, '');
+  return str.replace(/\s+/g, '');
 }
 
-// student transfer to the next year 
+// student transfer to the next year
 function nextClassTeacher() {
-    let currentClass = parseInt(user.myClass);
-    const nextClassWithWord = `${currentClass += 1}${user.myClass.replace(/[0-9]/g, '')}`;
+  let currentClass = parseInt(user.myClass);
+  const nextClassWithWord = `${(currentClass += 1)}${user.myClass.replace(/[0-9]/g, '')}`;
 
-    Swal.fire({
-        icon: 'warning',
-        title: 'Внимание!',
-        text: 'Эта функция переводит ваш аккаунт на след. класс. Ученикам нужно будет регистрироваться заново',
-        showDenyButton: true,
-        denyButtonText: 'Отмена'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            firebase.database().ref(`school${user.school}/teachers/teacher${user.code}/teacherClass`).set(nextClassWithWord);
-            signOutTeacher();
-        }
-    });
+  Swal.fire({
+    icon: 'warning',
+    title: 'Внимание!',
+    text: 'Эта функция переводит ваш аккаунт на след. класс. Ученикам нужно будет регистрироваться заново',
+    showDenyButton: true,
+    denyButtonText: 'Отмена',
+  }).then((result) => {
+    if (result.isConfirmed) {
+      firebase
+        .database()
+        .ref(`school${user.school}/teachers/teacher${user.code}/teacherClass`)
+        .set(nextClassWithWord);
+      signOutTeacher();
+    }
+  });
 }
 
 // find a student by voice
 function findStudent() {
-    recognition.start();
+  recognition.start();
 
-    const Toast = Swal.mixin({
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 2500,
-        timerProgressBar: true,
-        didOpen: (toast) => {
-            toast.addEventListener('mouseenter', Swal.stopTimer)
-            toast.addEventListener('mouseleave', Swal.resumeTimer)
-        }
-    });
+  const Toast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 2500,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+      toast.addEventListener('mouseenter', Swal.stopTimer);
+      toast.addEventListener('mouseleave', Swal.resumeTimer);
+    },
+  });
 
-    Toast.fire({
-        icon: 'success',
-        title: 'Скажите имя ученика'
-    });
+  Toast.fire({
+    icon: 'success',
+    title: 'Скажите имя ученика',
+  });
 
+  recognition.onresult = (event) => {
+    let userText = deletePointFromStr(event.results[0][0].transcript);
 
-    recognition.onresult = (event) => {
-        let userText = deletePointFromStr(event.results[0][0].transcript);
-
-        document.querySelector("#searchStudent").value = userText;
-        searchStudent();
-    }
+    document.querySelector('#searchStudent').value = userText;
+    searchStudent();
+  };
 }
 
 function deletePointFromStr(text) {
-    return text[text.length - 1] == '.' ? text.substring(0, text.length - 1) : text
+  return text[text.length - 1] == '.' ? text.substring(0, text.length - 1) : text;
 }
 
 // find a student by text
 function searchStudent() {
-    let parentStudentsList = document.querySelector("#studentsSchoolList");
-    let studentsList = parentStudentsList.querySelectorAll(":scope > li");
-    let inputSearch = document.querySelector("#searchStudent").value;
+  let parentStudentsList = document.querySelector('#studentsSchoolList');
+  let studentsList = parentStudentsList.querySelectorAll(':scope > li');
+  let inputSearch = document.querySelector('#searchStudent').value;
 
-    for (let i = 0; i < studentsList.length; i++) {
-        let studentName = studentsList[i].innerText;
+  for (let i = 0; i < studentsList.length; i++) {
+    let studentName = studentsList[i].innerText;
 
-        if (studentName.trim().toLowerCase().indexOf(inputSearch.trim().toLowerCase()) > -1) {
-            studentsList[i].style.display = "";
-        } else {
-            studentsList[i].style.display = "none";
-        }
+    if (studentName.trim().toLowerCase().indexOf(inputSearch.trim().toLowerCase()) > -1) {
+      studentsList[i].style.display = '';
+    } else {
+      studentsList[i].style.display = 'none';
     }
+  }
 }
 
 // student component
 Vue.component('student-app', {
-    template: `
+  template: `
         <div class="container mt-3 main-app-student" style="display: none;">
             <div class="row">
                 <div class="col-sm mt-3" id="profile">
@@ -699,23 +707,23 @@ Vue.component('student-app', {
             </div>
             <div id="notifications"></div>
         </div>
-    `
+    `,
 });
 
 // task component
 Vue.component('task', {
-    props: ['data'],
-    data() {
-        return {}
-    },
+  props: ['data'],
+  data() {
+    return {};
+  },
 
-    methods: {
-        task_done() {
-            this.$emit('task_done')
-        }
+  methods: {
+    task_done() {
+      this.$emit('task_done');
     },
+  },
 
-    template: `
+  template: `
         <div class="card text-dark mb-3">
             <div class="card-body">
                 <h5 class="card-text">{{ data.name }}</h5>
@@ -723,397 +731,499 @@ Vue.component('task', {
                 <button class="btn btn-outline-danger" style="cursor: pointer; float: right;" @click="task_done()"><i class="fas fa-trash"></i></button>
             </div>
         </div>
-    `
+    `,
 });
 
 // vue start
 let ILVue = new Vue({
-    el: '#app',
+  el: '#app',
 
-    data: {
-        // Содержание объекта в массиве
-        new_task: {
-            name: '',
-            id: '',
-        },
-
-        // Для поиска таска в массиве
-        currentTask: 0,
-
-        // Массивы To Do
-        tasks: [],
+  data: {
+    // Содержание объекта в массиве
+    new_task: {
+      name: '',
+      id: '',
     },
 
-    methods: {
-        signUpTeacher: function () { 
-            Swal.fire({
-                title: 'Регистрация аккаунта',
-                html: `
+    // Для поиска таска в массиве
+    currentTask: 0,
+
+    // Массивы To Do
+    tasks: [],
+  },
+
+  methods: {
+    signUpTeacher: function () {
+      Swal.fire({
+        title: 'Регистрация аккаунта',
+        html: `
                     <input type="email" id="emailTeacherSignUp" class="swal2-input" placeholder="Email">
                     <input type="password" id="passwordTeacherSignUp" class="swal2-input" placeholder="Пароль">
                     <input type="text" id="fullNameTeacherSignUp" class="swal2-input" placeholder="Имя и фамилия">
                     <input type="text" id="schoolTeacherSignUp" class="swal2-input" placeholder="Школа (Пример: 192)">
                     <input type="text" id="yourClassTeacherSignUp" class="swal2-input" placeholder="Ваш класс (Пример: 10А)">
                 `,
-                confirmButtonText: 'Далее',
-                showDenyButton: true,
-                focusConfirm: false,
-                allowOutsideClick: false,
-                allowEscapeKey: false,
-                preConfirm: () => {
-                    const email = Swal.getPopup().querySelector('#emailTeacherSignUp').value
-                    const password = Swal.getPopup().querySelector('#passwordTeacherSignUp').value
-                    const fullName = Swal.getPopup().querySelector('#fullNameTeacherSignUp').value
-                    const school = Swal.getPopup().querySelector('#schoolTeacherSignUp').value
-                    const yourClass = Swal.getPopup().querySelector('#yourClassTeacherSignUp').value
+        confirmButtonText: 'Далее',
+        showDenyButton: true,
+        focusConfirm: false,
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        preConfirm: () => {
+          const email = Swal.getPopup().querySelector('#emailTeacherSignUp').value;
+          const password = Swal.getPopup().querySelector('#passwordTeacherSignUp').value;
+          const fullName = Swal.getPopup().querySelector('#fullNameTeacherSignUp').value;
+          const school = Swal.getPopup().querySelector('#schoolTeacherSignUp').value;
+          const yourClass = Swal.getPopup().querySelector('#yourClassTeacherSignUp').value;
 
-                    if (!fullName || !school || !yourClass || !email || !password) {
-                        Swal.showValidationMessage(`Введите имя и фамилию!`)
-                    } return { email: email, password: password, fullName: fullName, school: school, yourClass: yourClass }
-                }
-            }).then((result) => {
-                firebase.auth().createUserWithEmailAndPassword(result.value.email, result.value.password).then((userCredential) => {
-                    firebase.database().ref(`school${result.value.school}/teachers/teacher${userCredential.user.uid}`).set({
-                        fullName: result.value.fullName,
-                        school: result.value.school,
-                        teacherClass: result.value.yourClass,
-                        id: userCredential.user.uid,
-                        isOnline: true,
-                    });
-
-                    localStorage.setItem('user', JSON.stringify({
-                        who: 'teacher',
-                        fullName: result.value.fullName,
-                        school: result.value.school,
-                        myClass: result.value.yourClass,
-                        code: userCredential.user.uid,
-                    }));
-
-                    ILVue.logIn = true;
-                    ILVue.currentUser = 'teacher';
-                    document.querySelector('.main-app-teacher').style.display = 'block';
-                    
-                    document.getElementById('myClassTitle').innerHTML += result.value.yourClass;
-
-                    setTimeout(() => location.reload(), 2000)
-                }).catch((error) => {
-                    console.log(error);
-                    Swal.fire({
-                        icon: 'error',
-                        text: 'Ошибка создания аккаунта. Возможно аккаунт с таким Email уже существует!',
-                    })    
-                });
-            });
+          if (!fullName || !school || !yourClass || !email || !password) {
+            Swal.showValidationMessage(`Введите имя и фамилию!`);
+          }
+          return {
+            email: email,
+            password: password,
+            fullName: fullName,
+            school: school,
+            yourClass: yourClass,
+          };
         },
+      }).then((result) => {
+        firebase
+          .auth()
+          .createUserWithEmailAndPassword(result.value.email, result.value.password)
+          .then((userCredential) => {
+            firebase
+              .database()
+              .ref(`school${result.value.school}/teachers/teacher${userCredential.user.uid}`)
+              .set({
+                fullName: result.value.fullName,
+                school: result.value.school,
+                teacherClass: result.value.yourClass,
+                id: userCredential.user.uid,
+                isOnline: true,
+              });
 
-        signInTeacher: function () {
+            localStorage.setItem(
+              'user',
+              JSON.stringify({
+                who: 'teacher',
+                fullName: result.value.fullName,
+                school: result.value.school,
+                myClass: result.value.yourClass,
+                code: userCredential.user.uid,
+              }),
+            );
+
+            ILVue.logIn = true;
+            ILVue.currentUser = 'teacher';
+            document.querySelector('.main-app-teacher').style.display = 'block';
+
+            document.getElementById('myClassTitle').innerHTML += result.value.yourClass;
+
+            setTimeout(() => location.reload(), 2000);
+          })
+          .catch((error) => {
+            console.log(error);
             Swal.fire({
-                title: 'Вход в аккаунт',
-                html: `
+              icon: 'error',
+              text: 'Ошибка создания аккаунта. Возможно аккаунт с таким Email уже существует!',
+            });
+          });
+      });
+    },
+
+    signInTeacher: function () {
+      Swal.fire({
+        title: 'Вход в аккаунт',
+        html: `
                     <input type="email" id="emailTeacherSignIn" class="swal2-input" placeholder="Email">
                     <input type="password" id="passwordTeacherSignIn" class="swal2-input" placeholder="Пароль">
                     <input type="text" id="fullNameTeacherSignIn" class="swal2-input" placeholder="Имя и Фамилия">
                     <input type="text" id="schoolTeacherSignIn" class="swal2-input" placeholder="Школа (Пример: 192)">
                     <input type="text" id="klassTeacherSignIn" class="swal2-input" placeholder="Ваш класс (Пример: 10А)">`,
-                confirmButtonText: 'Войти',
-                focusConfirm: false,
-                allowOutsideClick: false,
-                allowEscapeKey: false,
-                preConfirm: () => {
-                    const email = Swal.getPopup().querySelector('#emailTeacherSignIn').value
-                    const password = Swal.getPopup().querySelector('#passwordTeacherSignIn').value
-                    const fullName = Swal.getPopup().querySelector('#fullNameTeacherSignIn').value
-                    const school = Swal.getPopup().querySelector('#schoolTeacherSignIn').value
-                    const klass = Swal.getPopup().querySelector('#klassTeacherSignIn').value
+        confirmButtonText: 'Войти',
+        focusConfirm: false,
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        preConfirm: () => {
+          const email = Swal.getPopup().querySelector('#emailTeacherSignIn').value;
+          const password = Swal.getPopup().querySelector('#passwordTeacherSignIn').value;
+          const fullName = Swal.getPopup().querySelector('#fullNameTeacherSignIn').value;
+          const school = Swal.getPopup().querySelector('#schoolTeacherSignIn').value;
+          const klass = Swal.getPopup().querySelector('#klassTeacherSignIn').value;
 
-                    if (!school || !fullName || !klass || !email || !password) {
-                        Swal.showValidationMessage(`Пожалуйста, заполните все поля`)
-                    } return { fullName: fullName, school: school, myClass: klass, email: email, password: password }
-                }
-            }).then((result) => {
-                firebase.auth().signInWithEmailAndPassword(result.value.email, result.value.password).then((userCredential) => {
-                    firebase.database().ref(`school${result.value.school}/teachers/teacher${userCredential.user.uid}`).get().then((snapshot) => {
-                        if (snapshot.val() == null) {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Ошибка входа в аккаунт!',
-                                text: 'Проверьте введенные данные!',
-                                showDenyButton: true,
-                                denyButtonText: 'Зарегистрироваться',
-                                focusConfirm: false,
-                                allowOutsideClick: false,
-                                allowEscapeKey: false,
-                            }).then((result) => {
-                                if (result.isDenied) {
-                                    this.signUpTeacher();
-                                } else {
-                                    this.signInTeacher();
-                                }
-                            });
-                        } else {
-                            localStorage.setItem('user', JSON.stringify({
-                                who: 'teacher',
-                                fullName: result.value.fullName,
-                                myClass: result.value.myClass,
-                                school: result.value.school,
-                                code: userCredential.user.uid,
-                            }));
-    
-                            ILVue.logIn = true;
-                            ILVue.currentUser = 'teacher';
-                            document.querySelector('.main-app-teacher').style.display = 'block';
-    
-                            document.getElementById('myClassTitle').innerHTML += result.value.myClass;
-    
-                            setTimeout(() => location.reload(), 2000)
-                        }
-                    }).catch((error) => {
-                        console.log(error);
-                        this.signInTeacher();
-                    });
-                }).catch((error) => {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Ошибка входа в аккаунт!',
-                        text: 'Проверьте введенные email и пароль!',
-                        showDenyButton: true,
-                        denyButtonText: 'Зарегистрироваться',
-                        focusConfirm: false,
-                        allowOutsideClick: false,
-                        allowEscapeKey: false,
-                    }).then((result) => {
-                        if (result.isDenied) {
-                            this.signUpTeacher();
-                        } else {
-                            this.signInTeacher();
-                        }
-                    });
-                });
-            });
+          if (!school || !fullName || !klass || !email || !password) {
+            Swal.showValidationMessage(`Пожалуйста, заполните все поля`);
+          }
+          return {
+            fullName: fullName,
+            school: school,
+            myClass: klass,
+            email: email,
+            password: password,
+          };
         },
+      }).then((result) => {
+        firebase
+          .auth()
+          .signInWithEmailAndPassword(result.value.email, result.value.password)
+          .then((userCredential) => {
+            firebase
+              .database()
+              .ref(`school${result.value.school}/teachers/teacher${userCredential.user.uid}`)
+              .get()
+              .then((snapshot) => {
+                if (snapshot.val() == null) {
+                  Swal.fire({
+                    icon: 'error',
+                    title: 'Ошибка входа в аккаунт!',
+                    text: 'Проверьте введенные данные!',
+                    showDenyButton: true,
+                    denyButtonText: 'Зарегистрироваться',
+                    focusConfirm: false,
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                  }).then((result) => {
+                    if (result.isDenied) {
+                      this.signUpTeacher();
+                    } else {
+                      this.signInTeacher();
+                    }
+                  });
+                } else {
+                  localStorage.setItem(
+                    'user',
+                    JSON.stringify({
+                      who: 'teacher',
+                      fullName: result.value.fullName,
+                      myClass: result.value.myClass,
+                      school: result.value.school,
+                      code: userCredential.user.uid,
+                    }),
+                  );
 
-        signUpStudent: function () {
+                  ILVue.logIn = true;
+                  ILVue.currentUser = 'teacher';
+                  document.querySelector('.main-app-teacher').style.display = 'block';
+
+                  document.getElementById('myClassTitle').innerHTML += result.value.myClass;
+
+                  setTimeout(() => location.reload(), 2000);
+                }
+              })
+              .catch((error) => {
+                console.log(error);
+                this.signInTeacher();
+              });
+          })
+          .catch((error) => {
             Swal.fire({
-                title: 'Регистрация аккаунта',
-                html: `
+              icon: 'error',
+              title: 'Ошибка входа в аккаунт!',
+              text: 'Проверьте введенные email и пароль!',
+              showDenyButton: true,
+              denyButtonText: 'Зарегистрироваться',
+              focusConfirm: false,
+              allowOutsideClick: false,
+              allowEscapeKey: false,
+            }).then((result) => {
+              if (result.isDenied) {
+                this.signUpTeacher();
+              } else {
+                this.signInTeacher();
+              }
+            });
+          });
+      });
+    },
+
+    signUpStudent: function () {
+      Swal.fire({
+        title: 'Регистрация аккаунта',
+        html: `
                     <input type="email" id="emailSignUpStudent" class="swal2-input" placeholder="Email">
                     <input type="password" id="passwordSignUpStudent" class="swal2-input" placeholder="Пароль">
                     <input type="text" id="fullNameSignUpStudent" class="swal2-input" placeholder="Имя и Фамилия">
                     <input type="text" id="schoolSignUpStudent" class="swal2-input" placeholder="Школа (Пример: 192)">
                     <input type="text" id="klassSignUpStudent" class="swal2-input" placeholder="Класс (Пример: 10А)">`,
-                confirmButtonText: 'Далее',
-                showDenyButton: true,
-                focusConfirm: false,
-                allowOutsideClick: false,
-                allowEscapeKey: false,
-                preConfirm: () => {
-                    const email = Swal.getPopup().querySelector('#emailSignUpStudent').value
-                    const password = Swal.getPopup().querySelector('#passwordSignUpStudent').value
-                    const fullName = Swal.getPopup().querySelector('#fullNameSignUpStudent').value
-                    const school = Swal.getPopup().querySelector('#schoolSignUpStudent').value
-                    const klass = Swal.getPopup().querySelector('#klassSignUpStudent').value
-                    if (!fullName || !school || !klass || !email || !password) {
-                        Swal.showValidationMessage(`Заполните все поля`)
-                    } return { email: email, password: password, fullName: fullName, school: school, klass: klass }
-                }
-            }).then((result) => {
-                firebase.auth().createUserWithEmailAndPassword(result.value.email, result.value.password).then((userCredential) => {
-                    firebase.database().ref(`school${result.value.school}/students/student${result.value.fullName.toLowerCase().trim()} ${result.value.klass.toLowerCase().trim()}`).set({
-                        fullName: result.value.fullName,
-                        school: result.value.school,
-                        klass: result.value.klass,
-                        id: userCredential.user.uid,
-                        isOnline: true,
-                    });
-
-                    localStorage.setItem('user', JSON.stringify({
-                        who: 'student',
-                        fullName: result.value.fullName,
-                        school: result.value.school,
-                        klass: result.value.klass,
-                        isOnline: true,
-                    }));
-
-                    ILVue.logIn = true;
-                    ILVue.currentUser = 'student';
-                    document.querySelector('.main-app-student').style.display = 'block';
-                    
-                    setTimeout(() => location.reload(), 2000);
-                }).catch((error) => {
-                    console.log(error);
-                    Swal.fire({
-                        icon: 'error',
-                        text: 'Ошибка создания аккаунта. Возможно аккаунт с таким Email уже существует!',
-                    })
-                })
-            });
+        confirmButtonText: 'Далее',
+        showDenyButton: true,
+        focusConfirm: false,
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        preConfirm: () => {
+          const email = Swal.getPopup().querySelector('#emailSignUpStudent').value;
+          const password = Swal.getPopup().querySelector('#passwordSignUpStudent').value;
+          const fullName = Swal.getPopup().querySelector('#fullNameSignUpStudent').value;
+          const school = Swal.getPopup().querySelector('#schoolSignUpStudent').value;
+          const klass = Swal.getPopup().querySelector('#klassSignUpStudent').value;
+          if (!fullName || !school || !klass || !email || !password) {
+            Swal.showValidationMessage(`Заполните все поля`);
+          }
+          return {
+            email: email,
+            password: password,
+            fullName: fullName,
+            school: school,
+            klass: klass,
+          };
         },
+      }).then((result) => {
+        firebase
+          .auth()
+          .createUserWithEmailAndPassword(result.value.email, result.value.password)
+          .then((userCredential) => {
+            firebase
+              .database()
+              .ref(
+                `school${result.value.school}/students/student${result.value.fullName
+                  .toLowerCase()
+                  .trim()} ${result.value.klass.toLowerCase().trim()}`,
+              )
+              .set({
+                fullName: result.value.fullName,
+                school: result.value.school,
+                klass: result.value.klass,
+                id: userCredential.user.uid,
+                isOnline: true,
+              });
 
-        signInStudent: function () {
+            localStorage.setItem(
+              'user',
+              JSON.stringify({
+                who: 'student',
+                fullName: result.value.fullName,
+                school: result.value.school,
+                klass: result.value.klass,
+                isOnline: true,
+              }),
+            );
+
+            ILVue.logIn = true;
+            ILVue.currentUser = 'student';
+            document.querySelector('.main-app-student').style.display = 'block';
+
+            setTimeout(() => location.reload(), 2000);
+          })
+          .catch((error) => {
+            console.log(error);
             Swal.fire({
-                title: 'Вход в аккаунт',
-                html: `
+              icon: 'error',
+              text: 'Ошибка создания аккаунта. Возможно аккаунт с таким Email уже существует!',
+            });
+          });
+      });
+    },
+
+    signInStudent: function () {
+      Swal.fire({
+        title: 'Вход в аккаунт',
+        html: `
                     <input type="email" id="emailSignInStudent" class="swal2-input" placeholder="Email">
                     <input type="password" id="passwordSignInStudent" class="swal2-input" placeholder="Пароль">
                     <input type="text" id="fullNameSignInStudent" class="swal2-input" placeholder="Имя и Фамилия">
                     <input type="text" id="schoolSignInStudent" class="swal2-input" placeholder="Школа (Пример: 192)">
                     <input type="text" id="klassSignInStudent" class="swal2-input" placeholder="Класс (Пример: 10А)">`,
-                confirmButtonText: 'Далее',
-                showDenyButton: true,
-                focusConfirm: false,
-                allowOutsideClick: false,
-                allowEscapeKey: false,
-                preConfirm: () => {
-                    const email = Swal.getPopup().querySelector('#emailSignInStudent').value
-                    const password = Swal.getPopup().querySelector('#passwordSignInStudent').value
-                    const fullName = Swal.getPopup().querySelector('#fullNameSignInStudent').value
-                    const school = Swal.getPopup().querySelector('#schoolSignInStudent').value
-                    const klass = Swal.getPopup().querySelector('#klassSignInStudent').value
-                    if (!fullName || !school || !klass || !email || !password) {
-                        Swal.showValidationMessage(`Заполните все поля`)
-                    } return { fullName: fullName, school: school, klass: klass, email: email, password: password }
-                }
-            }).then((result) => {
-                firebase.auth().signInWithEmailAndPassword(result.value.email, result.value.password).then(() => {
-                    firebase.database().ref(`school${result.value.school}/students/student${result.value.fullName.toLowerCase().trim()} ${result.value.klass.toLowerCase().trim()}`).get().then((snapshot) => {
-                        if (snapshot.val() == null) {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Ошибка входа в аккаунт!',
-                                text: 'Проверьте введенные данные!',
-                                showDenyButton: true,
-                                denyButtonText: 'Зарегистрироваться',
-                                focusConfirm: false,
-                                allowOutsideClick: false,
-                                allowEscapeKey: false,
-                            }).then((result) => {
-                                if (result.isDenied) {
-                                    this.signUpStudent();
-                                } else {
-                                    this.signInStudent();
-                                }
-                            });
-                        } else {
-                            localStorage.setItem('user', JSON.stringify({
-                                who: 'student',
-                                fullName: result.value.fullName,
-                                school: result.value.school,
-                                klass: result.value.klass,
-                            }));
-
-                            firebase.database().ref(`school${result.value.school}/students/student${result.value.fullName.toLowerCase().trim()} ${result.value.klass.toLowerCase().trim()}/isOnline`).set(true);
-                            ILVue.logIn = true;
-                            ILVue.currentUser = 'student';
-                            document.querySelector('.main-app-student').style.display = 'block';
-                            
-                            setTimeout(() => location.reload(), 2000)
-                        }
-                    });
-                }).catch((error) => {
-                    console.log(error);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Ошибка входа в аккаунт!',
-                        text: 'Проверьте введенные Email и пароль!',
-                        showDenyButton: true,
-                        denyButtonText: 'Зарегистрироваться',
-                        focusConfirm: false,
-                        allowOutsideClick: false,
-                        allowEscapeKey: false,
-                    }).then((result) => {
-                        if (result.isDenied) {
-                            this.signUpStudent();
-                        } else {
-                            this.signInStudent();
-                        }
-                    });
-                })
-            });
+        confirmButtonText: 'Далее',
+        showDenyButton: true,
+        focusConfirm: false,
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        preConfirm: () => {
+          const email = Swal.getPopup().querySelector('#emailSignInStudent').value;
+          const password = Swal.getPopup().querySelector('#passwordSignInStudent').value;
+          const fullName = Swal.getPopup().querySelector('#fullNameSignInStudent').value;
+          const school = Swal.getPopup().querySelector('#schoolSignInStudent').value;
+          const klass = Swal.getPopup().querySelector('#klassSignInStudent').value;
+          if (!fullName || !school || !klass || !email || !password) {
+            Swal.showValidationMessage(`Заполните все поля`);
+          }
+          return {
+            fullName: fullName,
+            school: school,
+            klass: klass,
+            email: email,
+            password: password,
+          };
         },
-
-        // Добавить задание
-        add_task() {
-            if (this.new_task.name === '') {
-                Swal.fire({
-                    title: "Заполни все поля!",
-                    icon: "error"
-                })
-            } else {
-                const idTask = getRandId();
-
-                this.tasks.push({
-                    name: this.new_task.name,
-                    id: idTask,
-                });
-
-                add_task_db(this.currentTask);
-                this.currentTask += 1;
-
-                const Toast = Swal.mixin({
-                    toast: true,
-                    position: 'top-end',
-                    showConfirmButton: false,
-                    timer: 2500,
-                    timerProgressBar: true,
-                    didOpen: (toast) => {
-                        toast.addEventListener('mouseenter', Swal.stopTimer)
-                        toast.addEventListener('mouseleave', Swal.resumeTimer)
+      }).then((result) => {
+        firebase
+          .auth()
+          .signInWithEmailAndPassword(result.value.email, result.value.password)
+          .then(() => {
+            firebase
+              .database()
+              .ref(
+                `school${result.value.school}/students/student${result.value.fullName
+                  .toLowerCase()
+                  .trim()} ${result.value.klass.toLowerCase().trim()}`,
+              )
+              .get()
+              .then((snapshot) => {
+                if (snapshot.val() == null) {
+                  Swal.fire({
+                    icon: 'error',
+                    title: 'Ошибка входа в аккаунт!',
+                    text: 'Проверьте введенные данные!',
+                    showDenyButton: true,
+                    denyButtonText: 'Зарегистрироваться',
+                    focusConfirm: false,
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                  }).then((result) => {
+                    if (result.isDenied) {
+                      this.signUpStudent();
+                    } else {
+                      this.signInStudent();
                     }
-                });
+                  });
+                } else {
+                  localStorage.setItem(
+                    'user',
+                    JSON.stringify({
+                      who: 'student',
+                      fullName: result.value.fullName,
+                      school: result.value.school,
+                      klass: result.value.klass,
+                    }),
+                  );
 
-                Toast.fire({
-                    icon: 'success',
-                    title: 'Таск создан!'
-                });
-            }
-        },
+                  firebase
+                    .database()
+                    .ref(
+                      `school${result.value.school}/students/student${result.value.fullName
+                        .toLowerCase()
+                        .trim()} ${result.value.klass.toLowerCase().trim()}/isOnline`,
+                    )
+                    .set(true);
+                  ILVue.logIn = true;
+                  ILVue.currentUser = 'student';
+                  document.querySelector('.main-app-student').style.display = 'block';
 
-        // Удалить задание
-        delete_task(id_task) {
-            let user = JSON.parse(localStorage.getItem('user'));
+                  setTimeout(() => location.reload(), 2000);
+                }
+              });
+          })
+          .catch((error) => {
+            console.log(error);
+            Swal.fire({
+              icon: 'error',
+              title: 'Ошибка входа в аккаунт!',
+              text: 'Проверьте введенные Email и пароль!',
+              showDenyButton: true,
+              denyButtonText: 'Зарегистрироваться',
+              focusConfirm: false,
+              allowOutsideClick: false,
+              allowEscapeKey: false,
+            }).then((result) => {
+              if (result.isDenied) {
+                this.signUpStudent();
+              } else {
+                this.signInStudent();
+              }
+            });
+          });
+      });
+    },
 
-            const index = this.tasks.findIndex(item => item.id === id_task);
-            this.tasks.splice(index, 1);
+    // Добавить задание
+    add_task() {
+      if (this.new_task.name === '') {
+        Swal.fire({
+          title: 'Заполни все поля!',
+          icon: 'error',
+        });
+      } else {
+        const idTask = getRandId();
 
-            firebase.database().ref(`school${user.school}/teachers/teacher${user.code}/tasks/task${id_task}`).remove();
-        },
-    }
+        this.tasks.push({
+          name: this.new_task.name,
+          id: idTask,
+        });
+
+        add_task_db(this.currentTask);
+        this.currentTask += 1;
+
+        const Toast = Swal.mixin({
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 2500,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer);
+            toast.addEventListener('mouseleave', Swal.resumeTimer);
+          },
+        });
+
+        Toast.fire({
+          icon: 'success',
+          title: 'Таск создан!',
+        });
+      }
+    },
+
+    // Удалить задание
+    delete_task(id_task) {
+      let user = JSON.parse(localStorage.getItem('user'));
+
+      const index = this.tasks.findIndex((item) => item.id === id_task);
+      this.tasks.splice(index, 1);
+
+      firebase
+        .database()
+        .ref(`school${user.school}/teachers/teacher${user.code}/tasks/task${id_task}`)
+        .remove();
+    },
+  },
 });
 
 // teacher app
 function startTeacherApp() {
-    const user = JSON.parse(localStorage.getItem('user'));
+  const user = JSON.parse(localStorage.getItem('user'));
 
-    window.onblur = () => {
-        firebase.database().ref(`school${user.school}/teachers/teacher${user.code}/isOnline`).set(false);
-    }
+  window.onblur = () => {
+    firebase
+      .database()
+      .ref(`school${user.school}/teachers/teacher${user.code}/isOnline`)
+      .set(false);
+  };
 
-    window.onfocus = () => {
-        firebase.database().ref(`school${user.school}/teachers/teacher${user.code}/isOnline`).set(true);
-    }
+  window.onfocus = () => {
+    firebase.database().ref(`school${user.school}/teachers/teacher${user.code}/isOnline`).set(true);
+  };
 
-    // let pb_images = []
-    let pb_find_imgs = ['pcpcpd', 'gias', 'afa', 'pcs', 'fm'];
+  // let pb_images = []
+  let pb_find_imgs = ['pcpcpd', 'gias', 'afa', 'pcs', 'fm'];
 
-    firebase.database().ref(`school${user.school}/teachers/teacher${user.code}`).get().then((snapshot) => {
-        const fullName = snapshot.val().fullName;
-        const school = snapshot.val().school;
-        const klass = removeSpaces(snapshot.val().teacherClass);
+  firebase
+    .database()
+    .ref(`school${user.school}/teachers/teacher${user.code}`)
+    .get()
+    .then((snapshot) => {
+      const fullName = snapshot.val().fullName;
+      const school = snapshot.val().school;
+      const klass = removeSpaces(snapshot.val().teacherClass);
 
-        document.getElementById('profile-name').innerHTML = fullName;
-        document.getElementById('profile-class').innerHTML = `Мой класс: ${klass}`;
-        document.getElementById('profile-school').innerHTML = `/ Школа №${school}`;
+      document.getElementById('profile-name').innerHTML = fullName;
+      document.getElementById('profile-class').innerHTML = `Мой класс: ${klass}`;
+      document.getElementById('profile-school').innerHTML = `/ Школа №${school}`;
 
-        firebase.database().ref(`school${user.school}/students`).on('child_added', (data) => {
-            const fullName = data.val().fullName;
+      firebase
+        .database()
+        .ref(`school${user.school}/students`)
+        .on('child_added', (data) => {
+          const fullName = data.val().fullName;
 
-            for (let i = 0; i < pb_find_imgs.length; i++) {
-                storageRef.child(`pb${school}${klass}/pb-student${snapshot.val().id}/${pb_find_imgs[i]}`).getDownloadURL().then((url) => {
-                    document.querySelector(`#${pb_find_imgs[i]}-img`).src = url;
-                });
-            }
+          for (let i = 0; i < pb_find_imgs.length; i++) {
+            storageRef
+              .child(`pb${school}${klass}/pb-student${snapshot.val().id}/${pb_find_imgs[i]}`)
+              .getDownloadURL()
+              .then((url) => {
+                document.querySelector(`#${pb_find_imgs[i]}-img`).src = url;
+              });
+          }
 
-            document.getElementById('pb-students').innerHTML += `
+          document.getElementById('pb-students').innerHTML += `
                 <div class="modal fade" id="${data.val().id}" tabindex="-1">
                     <div class="modal-dialog modal-xl">
                         <div class="modal-content">
@@ -1121,27 +1231,37 @@ function startTeacherApp() {
                                 <div class="col-md-6" id="pcpcpd">
                                     <label for="pcpcpd-label" class="form-label fw-bold">Согласие родителя на обработку персональных данных ребенка</label>
                                     <img src="" class="pb-img" id="pcpcpd-img" />
-                                    <input type="file" class="form-control mt-2" onchange="upload_pb('pcpcpd', 'pcpcpd-file', '${school}', '${klass}', '${snapshot.val().id}')" id="pcpcpd-file">
+                                    <input type="file" class="form-control mt-2" onchange="upload_pb('pcpcpd', 'pcpcpd-file', '${school}', '${klass}', '${
+            snapshot.val().id
+          }')" id="pcpcpd-file">
                                 </div>
                                 <div class="col-md-6" id="gias">
                                     <label for="gias-label" class="form-label fw-bold">Общие сведения об учащемся</label>
                                     <img src="" class="pb-img" id="gias-img" />
-                                    <input type="file" class="form-control mt-2" onchange="upload_pb('gias', 'gias-file', '${school}', '${klass}', '${snapshot.val().id}')" id="gias-file">
+                                    <input type="file" class="form-control mt-2" onchange="upload_pb('gias', 'gias-file', '${school}', '${klass}', '${
+            snapshot.val().id
+          }')" id="gias-file">
                                 </div>
                                 <div class="col-md-6" id="afa">
                                     <label for="afa-label" class="form-label fw-bold">Завяление о приеме</label>
                                     <img src="" class="pb-img" id="afa-img" />
-                                    <input type="file" class="form-control mt-2" onchange="upload_pb('afa', 'afa-file', '${school}', '${klass}', '${snapshot.val().id}')" id="afa-file">
+                                    <input type="file" class="form-control mt-2" onchange="upload_pb('afa', 'afa-file', '${school}', '${klass}', '${
+            snapshot.val().id
+          }')" id="afa-file">
                                 </div>
                                 <div class="col-md-6" id="pcs">
                                     <label for="pcs-label" class="form-label fw-bold">Личная карта обучающегося</label>
                                     <img src="" class="pb-img" id="pcs-img" />
-                                    <input type="file" class="form-control mt-2" onchange="upload_pb('pcs', 'pcs-file', '${school}', '${klass}', '${snapshot.val().id}')" id="pcs-file">
+                                    <input type="file" class="form-control mt-2" onchange="upload_pb('pcs', 'pcs-file', '${school}', '${klass}', '${
+            snapshot.val().id
+          }')" id="pcs-file">
                                 </div>
                                 <div class="col-md-6" id="fm">
                                     <label for="fm-label" class="form-label fw-bold">Итоговые оценки</label>
                                     <img src="" class="pb-img" id="fm-img" />
-                                    <input type="file" class="form-control mt-2" onchange="upload_pb('fm', 'fm-file', '${school}', '${klass}', '${snapshot.val().id}')" id="fm-file">
+                                    <input type="file" class="form-control mt-2" onchange="upload_pb('fm', 'fm-file', '${school}', '${klass}', '${
+            snapshot.val().id
+          }')" id="fm-file">
                                 </div>
                             </form>
                             <div class="modal-header">
@@ -1152,97 +1272,147 @@ function startTeacherApp() {
                 </div>
             `;
 
-            if (removeSpaces(data.val().klass) == removeSpaces(user.myClass)) {
-                document.getElementById('myClassList').innerHTML += `<li class="list-group-item" data-bs-toggle="collapse" data-bs-target="[id='${data.val().id}']">${fullName}</li>`;
-                document.getElementById('studentsSchoolList').innerHTML += `<li class="list-group-item" data-bs-toggle="collapse" data-bs-target="[id='${data.val().id}']">${fullName}</li>`;
+          if (removeSpaces(data.val().klass) == removeSpaces(user.myClass)) {
+            document.getElementById(
+              'myClassList',
+            ).innerHTML += `<li class="list-group-item" data-bs-toggle="collapse" data-bs-target="[id='${
+              data.val().id
+            }']">${fullName}</li>`;
+            document.getElementById(
+              'studentsSchoolList',
+            ).innerHTML += `<li class="list-group-item" data-bs-toggle="collapse" data-bs-target="[id='${
+              data.val().id
+            }']">${fullName}</li>`;
 
-                document.getElementById('myClassList').innerHTML += `
+            document.getElementById('myClassList').innerHTML += `
                     <div class="collapse" id="${data.val().id}">
                         <div class="card card-body">
                             <p>Имя: ${fullName}</p>
                             <p>Класс: ${removeSpaces(data.val().klass)}</p>
-                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#${data.val().id}">Личное дело</button>
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#${
+                              data.val().id
+                            }">Личное дело</button>
                         </div>
                     </div>
                 `;
-                document.getElementById('studentsSchoolList').innerHTML += `
+            document.getElementById('studentsSchoolList').innerHTML += `
                     <div class="collapse" id="${data.val().id}">
                         <div class="card card-body">
                             <p>Имя: ${fullName}</p>
                             <p>Класс: ${removeSpaces(data.val().klass)}</p>
-                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#${data.val().id}">Личное дело</button>
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#${
+                              data.val().id
+                            }">Личное дело</button>
                         </div>
                     </div>
                 `;
-            } else {
-                document.getElementById('studentsSchoolList').innerHTML += `<li class="list-group-item" data-bs-toggle="collapse" data-bs-target="[id='${data.val().id}']">${fullName}</li>`;
-                document.getElementById('studentsSchoolList').innerHTML += `
+          } else {
+            document.getElementById(
+              'studentsSchoolList',
+            ).innerHTML += `<li class="list-group-item" data-bs-toggle="collapse" data-bs-target="[id='${
+              data.val().id
+            }']">${fullName}</li>`;
+            document.getElementById('studentsSchoolList').innerHTML += `
                     <div class="collapse" id="${data.val().id}">
                         <div class="card card-body">
                             <p>Имя: ${fullName}</p>
                             <p>Класс: ${removeSpaces(data.val().klass)}</p>
-                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#${data.val().id}">Личное дело</button>
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#${
+                              data.val().id
+                            }">Личное дело</button>
                         </div>
                     </div>
                 `;
-            }
+          }
         });
 
-        firebase.database().ref(`school${user.school}/students`)
+      firebase.database().ref(`school${user.school}/students`);
     });
 }
 
 function upload_pb(namePb, imgElem, school, klass, id) {
-    let img = document.getElementById(imgElem).files[0];
+  let img = document.getElementById(imgElem).files[0];
 
-    storageRef.child(`pb${school}${klass}/pb-student${id}/${namePb}`).put(img).then(() => console.log('success'));
+  storageRef
+    .child(`pb${school}${klass}/pb-student${id}/${namePb}`)
+    .put(img)
+    .then(() => console.log('success'));
 }
 
 // student app
 function startStudentApp() {
-    let user = JSON.parse(localStorage.getItem('user'));
+  let user = JSON.parse(localStorage.getItem('user'));
 
-    window.onblur = () => {
-        firebase.database().ref(`school${user.school}/students/student${user.fullName.toLowerCase().trim()} ${user.klass.toLowerCase().trim()}/isOnline`).set(false);
-    }
+  window.onblur = () => {
+    firebase
+      .database()
+      .ref(
+        `school${user.school}/students/student${user.fullName.toLowerCase().trim()} ${user.klass
+          .toLowerCase()
+          .trim()}/isOnline`,
+      )
+      .set(false);
+  };
 
-    window.onfocus = () => {
-        firebase.database().ref(`school${user.school}/students/student${user.fullName.toLowerCase().trim()} ${user.klass.toLowerCase().trim()}/isOnline`).set(true);
-    }
+  window.onfocus = () => {
+    firebase
+      .database()
+      .ref(
+        `school${user.school}/students/student${user.fullName.toLowerCase().trim()} ${user.klass
+          .toLowerCase()
+          .trim()}/isOnline`,
+      )
+      .set(true);
+  };
 
-    console.log(`school${user.school}/students/student${user.fullName.toLowerCase().trim()} ${user.klass.toLowerCase().trim()}`)
-    firebase.database().ref(`school${user.school}/students/student${user.fullName.toLowerCase().trim()} ${user.klass.toLowerCase().trim()}`).get().then((snapshot) => {
-        const fullName = snapshot.val().fullName;
-        const school = snapshot.val().school;
-        const klass = snapshot.val().klass;
-        // const teacherId = snapshot.val().teacherId;
+  console.log(
+    `school${user.school}/students/student${user.fullName.toLowerCase().trim()} ${user.klass
+      .toLowerCase()
+      .trim()}`,
+  );
+  firebase
+    .database()
+    .ref(
+      `school${user.school}/students/student${user.fullName.toLowerCase().trim()} ${user.klass
+        .toLowerCase()
+        .trim()}`,
+    )
+    .get()
+    .then((snapshot) => {
+      const fullName = snapshot.val().fullName;
+      const school = snapshot.val().school;
+      const klass = snapshot.val().klass;
+      // const teacherId = snapshot.val().teacherId;
 
-        document.getElementById('profile-name-student').innerHTML = fullName;
-        document.getElementById('profile-class-student').innerHTML = `Я учусь в ${klass} классе`;
-        document.getElementById('profile-school-student').innerHTML = `/ Школа №${school}`;
+      document.getElementById('profile-name-student').innerHTML = fullName;
+      document.getElementById('profile-class-student').innerHTML = `Я учусь в ${klass} классе`;
+      document.getElementById('profile-school-student').innerHTML = `/ Школа №${school}`;
     });
 }
 
 // inner news
 function innerNews() {
-    let userClass = '';
+  let userClass = '';
 
-    const user = JSON.parse(localStorage.getItem('user'));
+  const user = JSON.parse(localStorage.getItem('user'));
 
-    // global news
-    firebase.database().ref(`school${user.school}/news/`).on('child_added', (data) => {
-        const nameNews = data.val().nameNews;
-        const textNews = data.val().textNews;
-        const fullName = data.val().fullName;
-        const newsId = data.val().newsId;
-        const likes = data.val().likes;
-        const dislikes = data.val().dislikes;
-        const day = data.val().date.day;
-        const month = data.val().date.month;
-        const year = data.val().date.year;
+  // global news
+  firebase
+    .database()
+    .ref(`school${user.school}/news/`)
+    .on('child_added', (data) => {
+      const nameNews = data.val().nameNews;
+      const textNews = data.val().textNews;
+      const fullName = data.val().fullName;
+      const newsId = data.val().newsId;
+      const likes = data.val().likes;
+      const dislikes = data.val().dislikes;
+      const day = data.val().date.day;
+      const month = data.val().date.month;
+      const year = data.val().date.year;
 
-        if (fullName === undefined) {
-            document.getElementById('news').innerHTML += `
+      if (fullName === undefined) {
+        document.getElementById('news').innerHTML += `
                 <div class="card mb-3">
                     <div class="card-body">
                         <h6 class="card-subtitle text-muted" style="float: right">${day}.${month}.${year}</h6>
@@ -1265,8 +1435,8 @@ function innerNews() {
                     </div>
                 </div>
             `;
-        } else {
-            document.getElementById('news').innerHTML += `
+      } else {
+        document.getElementById('news').innerHTML += `
                 <div class="card mb-3">
                     <div class="card-body">
                         <h6 class="card-subtitle text-muted" style="float: right">${day}.${month}.${year}</h6>
@@ -1290,15 +1460,18 @@ function innerNews() {
                     </div>
                 </div>
             `;
-        }
+      }
 
-        // comments
-        firebase.database().ref(`school${user.school}/news/${newsId}/comments/`).on('child_added', (snapshot) => {
-            const fullName = snapshot.val().fullName;
-            const comment = snapshot.val().comment;
+      // comments
+      firebase
+        .database()
+        .ref(`school${user.school}/news/${newsId}/comments/`)
+        .on('child_added', (snapshot) => {
+          const fullName = snapshot.val().fullName;
+          const comment = snapshot.val().comment;
 
-            const commentsDiv = document.getElementById(`innerComments${newsId}`);
-            commentsDiv.innerHTML += `
+          const commentsDiv = document.getElementById(`innerComments${newsId}`);
+          commentsDiv.innerHTML += `
                 <div class="card comment m-auto mb-2">
                     <div class="card-body">
                         <h6 class="card-subtitle mb-2 text-muted">${fullName}</h6>
@@ -1308,64 +1481,81 @@ function innerNews() {
             `;
         });
 
-        switch (user.who) {
-            case 'student':
-                firebase.database().ref(`school${user.school}/students/student${user.fullName.toLowerCase()} ${userClass.toLowerCase()}/likes/emotions${newsId}/`).get().then((snapshot) => {
-                    let emotions = snapshot.val()
+      switch (user.who) {
+        case 'student':
+          firebase
+            .database()
+            .ref(
+              `school${
+                user.school
+              }/students/student${user.fullName.toLowerCase()} ${userClass.toLowerCase()}/likes/emotions${newsId}/`,
+            )
+            .get()
+            .then((snapshot) => {
+              let emotions = snapshot.val();
 
-                    if (emotions === 'like') {
-                        const likePostElem = document.getElementById(`likePostIcon${newsId}`)
+              if (emotions === 'like') {
+                const likePostElem = document.getElementById(`likePostIcon${newsId}`);
 
-                        likePostElem.className = 'fas fa-heart'
-                    } else if (emotions === 'dislike') {
-                        const dislikePostElem = document.getElementById(`dislikePostIcon${newsId}`)
+                likePostElem.className = 'fas fa-heart';
+              } else if (emotions === 'dislike') {
+                const dislikePostElem = document.getElementById(`dislikePostIcon${newsId}`);
 
-                        dislikePostElem.className = 'fas fa-thumbs-down'
-                    }
-                })
-                ; break;
-            case "teacher":
-                firebase.database().ref(`school${user.school}/teachers/teacher${user.code}/likes/emotions${newsId}/`).get().then((snapshot) => {
-                    let emotions = snapshot.val()
+                dislikePostElem.className = 'fas fa-thumbs-down';
+              }
+            });
+          break;
+        case 'teacher':
+          firebase
+            .database()
+            .ref(`school${user.school}/teachers/teacher${user.code}/likes/emotions${newsId}/`)
+            .get()
+            .then((snapshot) => {
+              let emotions = snapshot.val();
 
-                    if (emotions === 'like') {
-                        const likePostElem = document.getElementById(`likePostIcon${newsId}`)
+              if (emotions === 'like') {
+                const likePostElem = document.getElementById(`likePostIcon${newsId}`);
 
-                        likePostElem.className = 'fas fa-heart'
-                    } else if (emotions === 'dislike') {
-                        const dislikePostElem = document.getElementById(`dislikePostIcon${newsId}`)
+                likePostElem.className = 'fas fa-heart';
+              } else if (emotions === 'dislike') {
+                const dislikePostElem = document.getElementById(`dislikePostIcon${newsId}`);
 
-                        dislikePostElem.className = 'fas fa-thumbs-down'
-                    }
-                })
-            ; break;
-        }
+                dislikePostElem.className = 'fas fa-thumbs-down';
+              }
+            });
+          break;
+      }
     });
 
-    try {
-        user.myClass.length % 2 == 0 ? 
-            userClass = `${user.myClass[0]}${user.myClass = user.myClass[1].toUpperCase()}` : 
-            userClass = `${user.myClass[0]}${user.myClass[1]}${user.myClass = user.myClass[2].toUpperCase()}`
-    } catch {
-        user.klass.length % 2 == 0 ? 
-            userClass = `${user.klass[0]}${user.klass = user.klass[1].toUpperCase()}` : 
-            userClass = `${user.klass[0]}${user.klass[1]}${user.klass = user.klass[2].toUpperCase()}`
-    }
+  try {
+    user.myClass.length % 2 == 0
+      ? (userClass = `${user.myClass[0]}${(user.myClass = user.myClass[1].toUpperCase())}`)
+      : (userClass = `${user.myClass[0]}${user.myClass[1]}${(user.myClass =
+          user.myClass[2].toUpperCase())}`);
+  } catch {
+    user.klass.length % 2 == 0
+      ? (userClass = `${user.klass[0]}${(user.klass = user.klass[1].toUpperCase())}`)
+      : (userClass = `${user.klass[0]}${user.klass[1]}${(user.klass =
+          user.klass[2].toUpperCase())}`);
+  }
 
-    // news from class
-    firebase.database().ref(`school${user.school}/news${userClass}/`).on('child_added', (data) => {
-        const nameNews = data.val().nameNews;
-        const textNews = data.val().textNews;
-        const fullName = data.val().fullName;
-        const newsId = data.val().newsId;
-        const likes = data.val().likes;
-        const dislikes = data.val().dislikes;
-        const day = data.val().date.day;
-        const month = data.val().date.month;
-        const year = data.val().date.year;
+  // news from class
+  firebase
+    .database()
+    .ref(`school${user.school}/news${userClass}/`)
+    .on('child_added', (data) => {
+      const nameNews = data.val().nameNews;
+      const textNews = data.val().textNews;
+      const fullName = data.val().fullName;
+      const newsId = data.val().newsId;
+      const likes = data.val().likes;
+      const dislikes = data.val().dislikes;
+      const day = data.val().date.day;
+      const month = data.val().date.month;
+      const year = data.val().date.year;
 
-        if (fullName === undefined) {
-            document.getElementById('news').innerHTML += `
+      if (fullName === undefined) {
+        document.getElementById('news').innerHTML += `
                 <div class="card mb-3">
                     <div class="card-body">
                         <h6 class="card-subtitle text-muted" style="float: right">${day}.${month}.${year}</h6>
@@ -1388,8 +1578,8 @@ function innerNews() {
                     </div>
                 </div>
             `;
-        } else {
-            document.getElementById('news').innerHTML += `
+      } else {
+        document.getElementById('news').innerHTML += `
                 <div class="card mb-3">
                     <div class="card-body">
                         <h6 class="card-subtitle text-muted" style="float: right">${day}.${month}.${year}</h6>
@@ -1413,14 +1603,17 @@ function innerNews() {
                     </div>
                 </div>
             `;
-        }
+      }
 
-        firebase.database().ref(`school${user.school}/news${userClass}/${newsId}/comments/`).on('child_added', (snapshot) => {
-            const fullName = snapshot.val().fullName;
-            const comment = snapshot.val().comment;
+      firebase
+        .database()
+        .ref(`school${user.school}/news${userClass}/${newsId}/comments/`)
+        .on('child_added', (snapshot) => {
+          const fullName = snapshot.val().fullName;
+          const comment = snapshot.val().comment;
 
-            const commentsDiv = document.getElementById(`innerComments${newsId}`);
-            commentsDiv.innerHTML += `
+          const commentsDiv = document.getElementById(`innerComments${newsId}`);
+          commentsDiv.innerHTML += `
                 <div class="card comment m-auto mb-2">
                     <div class="card-body">
                         <h6 class="card-subtitle mb-2 text-muted">${fullName}</h6>
@@ -1430,61 +1623,82 @@ function innerNews() {
             `;
         });
 
-        switch (user.who) {
-            case 'student':
-                firebase.database().ref(`school${user.school}/students/student${user.fullName.toLowerCase()} ${userClass.toLowerCase()}/likes/emotions${newsId}/`).get().then((snapshot) => {
-                    let emotions = snapshot.val()
+      switch (user.who) {
+        case 'student':
+          firebase
+            .database()
+            .ref(
+              `school${
+                user.school
+              }/students/student${user.fullName.toLowerCase()} ${userClass.toLowerCase()}/likes/emotions${newsId}/`,
+            )
+            .get()
+            .then((snapshot) => {
+              let emotions = snapshot.val();
 
-                    if (emotions === 'like') {
-                        const likePostElem = document.getElementById(`likePostIcon${newsId}`)
+              if (emotions === 'like') {
+                const likePostElem = document.getElementById(`likePostIcon${newsId}`);
 
-                        likePostElem.className = 'fas fa-heart'
-                    } else if (emotions === 'dislike') {
-                        const dislikePostElem = document.getElementById(`dislikePostIcon${newsId}`)
+                likePostElem.className = 'fas fa-heart';
+              } else if (emotions === 'dislike') {
+                const dislikePostElem = document.getElementById(`dislikePostIcon${newsId}`);
 
-                        dislikePostElem.className = 'fas fa-thumbs-down'
-                    }
-                })
-            ; break;
-            case "teacher":
-                firebase.database().ref(`school${user.school}/teachers/teacher${user.code}/likes/emotions${newsId}/`).get().then((snapshot) => {
-                    let emotions = snapshot.val()
+                dislikePostElem.className = 'fas fa-thumbs-down';
+              }
+            });
+          break;
+        case 'teacher':
+          firebase
+            .database()
+            .ref(`school${user.school}/teachers/teacher${user.code}/likes/emotions${newsId}/`)
+            .get()
+            .then((snapshot) => {
+              let emotions = snapshot.val();
 
-                    if (emotions === 'like') {
-                        const likePostElem = document.getElementById(`likePostIcon${newsId}`)
+              if (emotions === 'like') {
+                const likePostElem = document.getElementById(`likePostIcon${newsId}`);
 
-                        likePostElem.className = 'fas fa-heart'
-                    } else if (emotions === 'dislike') {
-                        const dislikePostElem = document.getElementById(`dislikePostIcon${newsId}`)
+                likePostElem.className = 'fas fa-heart';
+              } else if (emotions === 'dislike') {
+                const dislikePostElem = document.getElementById(`dislikePostIcon${newsId}`);
 
-                        dislikePostElem.className = 'fas fa-thumbs-down'
-                    }
-                })
-            ; break;
-        }
+                dislikePostElem.className = 'fas fa-thumbs-down';
+              }
+            });
+          break;
+      }
     });
 
-    // render news from not teacher class, but created from this teacher
-    if (user.who == "teacher") {
-        firebase.database().ref(`school${user.school}/teachers/teacher${user.code}/newsForNotClass/`).on('child_added', (data) => {
-            firebase.database().ref(`school${user.school}/news${data.val().klass}/${data.val().newsId}`).get().then((snapshot) => {
-                const nameNews = snapshot.val().nameNews;
-                const textNews = snapshot.val().textNews;
-                const fullName = snapshot.val().fullName;
-                const newsId = snapshot.val().newsId;
-                const likes = snapshot.val().likes;
-                const dislikes = snapshot.val().dislikes;
-                const day = snapshot.val().date.day;
-                const month = snapshot.val().date.month;
-                const year = snapshot.val().date.year;
-                const klassNews = snapshot.val().klassNews;
-    
-                if (fullName === undefined) {
-                    document.getElementById('news').innerHTML += `
+  // render news from not teacher class, but created from this teacher
+  if (user.who == 'teacher') {
+    firebase
+      .database()
+      .ref(`school${user.school}/teachers/teacher${user.code}/newsForNotClass/`)
+      .on('child_added', (data) => {
+        firebase
+          .database()
+          .ref(`school${user.school}/news${data.val().klass}/${data.val().newsId}`)
+          .get()
+          .then((snapshot) => {
+            const nameNews = snapshot.val().nameNews;
+            const textNews = snapshot.val().textNews;
+            const fullName = snapshot.val().fullName;
+            const newsId = snapshot.val().newsId;
+            const likes = snapshot.val().likes;
+            const dislikes = snapshot.val().dislikes;
+            const day = snapshot.val().date.day;
+            const month = snapshot.val().date.month;
+            const year = snapshot.val().date.year;
+            const klassNews = snapshot.val().klassNews;
+
+            if (fullName === undefined) {
+              document.getElementById('news').innerHTML += `
                         <div class="card mb-3">
                             <div class="card-body">
                                 <h6 class="card-subtitle text-muted" style="float: right">${day}.${month}.${year}</h6>
-                                <h6 class="card-subtitle text-muted" style="float: right; margin-right: 0.5rem;">${data.val().klass}</h6>
+                                <h6 class="card-subtitle text-muted" style="float: right; margin-right: 0.5rem;">${
+                                  data.val().klass
+                                }</h6>
 
                                 <h5 class="card-title">${nameNews}</h5>
                                 <small>${klassNews}</small>
@@ -1495,19 +1709,25 @@ function innerNews() {
                                 <form>
                                     <div class="input-group">
                                         <input type="text" class="form-control" id="commentInput${newsId}" placeholder="Комментарий...">
-                                        <button class="btn btn-outline-success" type="button" id="btn-comment" onclick="postComment('${newsId}', '${user.fullName}', '${user.school}', '${klassNews}')">Написать</button>
+                                        <button class="btn btn-outline-success" type="button" id="btn-comment" onclick="postComment('${newsId}', '${
+                user.fullName
+              }', '${user.school}', '${klassNews}')">Написать</button>
                                     </div>
                                 </form>
                             </div>
                             <div class="card-footer">
-                                <a href="#" class="card-link likePost" id="likePost${newsId}" onclick="likePost(${newsId}, '${user.school}', '${klassNews}')"><i class="far fa-heart" id="likePostIcon${newsId}"></i> ${likes}</a>
-                                <a href="#" class="card-link dislikePost" id="dislikePost${newsId}" onclick="dislikePost(${newsId}, '${user.school}', '${klassNews}')"><i class="far fa-thumbs-down" id="dislikePostIcon${newsId}"></i> ${dislikes}</a>
+                                <a href="#" class="card-link likePost" id="likePost${newsId}" onclick="likePost(${newsId}, '${
+                user.school
+              }', '${klassNews}')"><i class="far fa-heart" id="likePostIcon${newsId}"></i> ${likes}</a>
+                                <a href="#" class="card-link dislikePost" id="dislikePost${newsId}" onclick="dislikePost(${newsId}, '${
+                user.school
+              }', '${klassNews}')"><i class="far fa-thumbs-down" id="dislikePostIcon${newsId}"></i> ${dislikes}</a>
                                 <a data-bs-toggle="collapse" href="#comments${newsId}" class="card-link" id="commentsPost" style="float: right;"><i class="far fa-comments" id="iconComments"></i> Комментарии</a>
                             </div>
                         </div>
                     `;
-                } else {
-                    document.getElementById('news').innerHTML += `
+            } else {
+              document.getElementById('news').innerHTML += `
                         <div class="card mb-3">
                             <div class="card-body">
                                 <h6 class="card-subtitle text-muted" style="float: right">${day}.${month}.${year}</h6>
@@ -1520,26 +1740,39 @@ function innerNews() {
                                 <form>
                                     <div class="input-group">
                                         <input type="text" class="form-control" id="commentInput${newsId}" placeholder="Комментарий...">
-                                        <button class="btn btn-outline-success" type="button" id="btn-comment" onclick="postComment('${newsId}', '${user.fullName}', '${user.school}', '${klassNews}')">Написать</button>
+                                        <button class="btn btn-outline-success" type="button" id="btn-comment" onclick="postComment('${newsId}', '${
+                user.fullName
+              }', '${user.school}', '${klassNews}')">Написать</button>
                                     </div>
                                 </form>
                             </div>
                             <div class="card-footer">
-                                <a href="#" class="card-link likePost" id="likePost${newsId}" onclick="likePost(${newsId}, '${user.school}', '${klassNews}')"><i class="far fa-heart" id="likePostIcon${newsId}"></i> ${likes}</a>
-                                <a href="#" class="card-link dislikePost" id="dislikePost${newsId}" onclick="dislikePost(${newsId}, '${user.school}', '${klassNews}')"><i class="far fa-thumbs-down" id="dislikePostIcon${newsId}"></i> ${dislikes}</a>
+                                <a href="#" class="card-link likePost" id="likePost${newsId}" onclick="likePost(${newsId}, '${
+                user.school
+              }', '${klassNews}')"><i class="far fa-heart" id="likePostIcon${newsId}"></i> ${likes}</a>
+                                <a href="#" class="card-link dislikePost" id="dislikePost${newsId}" onclick="dislikePost(${newsId}, '${
+                user.school
+              }', '${klassNews}')"><i class="far fa-thumbs-down" id="dislikePostIcon${newsId}"></i> ${dislikes}</a>
                                 <a data-bs-toggle="collapse" href="#comments${newsId}" class="card-link" id="commentsPost" style="float: right;"><i class="far fa-comments" id="iconComments"></i> Комментарии</a>
                             </div>
-                            ${klassNews != undefined ? `<small class="smallNewsForCertainClass text-muted">Новость для: ${klassNews} класса</small>` : ''}
+                            ${
+                              klassNews != undefined
+                                ? `<small class="smallNewsForCertainClass text-muted">Новость для: ${klassNews} класса</small>`
+                                : ''
+                            }
                         </div>
                     `;
-                }
-    
-                firebase.database().ref(`school${user.school}/news${klassNews}/${newsId}/comments/`).on('child_added', (snapshot) => {
-                    const fullName = snapshot.val().fullName;
-                    const comment = snapshot.val().comment;
-    
-                    const commentsDiv = document.getElementById(`innerComments${newsId}`);
-                    commentsDiv.innerHTML += `
+            }
+
+            firebase
+              .database()
+              .ref(`school${user.school}/news${klassNews}/${newsId}/comments/`)
+              .on('child_added', (snapshot) => {
+                const fullName = snapshot.val().fullName;
+                const comment = snapshot.val().comment;
+
+                const commentsDiv = document.getElementById(`innerComments${newsId}`);
+                commentsDiv.innerHTML += `
                         <div class="card comment m-auto mb-2">
                             <div class="card-body">
                                 <h6 class="card-subtitle mb-2 text-muted">${fullName}</h6>
@@ -1547,15 +1780,17 @@ function innerNews() {
                             </div>
                         </div>
                     `;
-                });
+              });
 
-                
-                firebase.database().ref(`school${user.school}/news${userClass}/${newsId}/comments/`).on('child_added', (snapshot) => {
-                    const fullName = snapshot.val().fullName;
-                    const comment = snapshot.val().comment;
+            firebase
+              .database()
+              .ref(`school${user.school}/news${userClass}/${newsId}/comments/`)
+              .on('child_added', (snapshot) => {
+                const fullName = snapshot.val().fullName;
+                const comment = snapshot.val().comment;
 
-                    const commentsDiv = document.getElementById(`innerComments${newsId}`);
-                    commentsDiv.innerHTML += `
+                const commentsDiv = document.getElementById(`innerComments${newsId}`);
+                commentsDiv.innerHTML += `
                         <div class="card comment m-auto mb-2">
                             <div class="card-body">
                                 <h6 class="card-subtitle mb-2 text-muted">${fullName}</h6>
@@ -1563,581 +1798,857 @@ function innerNews() {
                             </div>
                         </div>
                     `;
-                });
-    
-                switch (user.who) {
-                    case 'student':
-                        firebase.database().ref(`school${user.school}/students/student${user.fullName.toLowerCase()} ${userClass.toLowerCase()}/likes/emotions${newsId}/`).get().then((snapshot) => {
-                            let emotions = snapshot.val()
-    
-                            if (emotions === 'like') {
-                                const likePostElem = document.getElementById(`likePostIcon${newsId}`)
-    
-                                likePostElem.className = 'fas fa-heart'
-                            } else if (emotions === 'dislike') {
-                                const dislikePostElem = document.getElementById(`dislikePostIcon${newsId}`)
-    
-                                dislikePostElem.className = 'fas fa-thumbs-down'
-                            }
-                        })
-                    ; break;
-                    case "teacher":
-                        firebase.database().ref(`school${user.school}/teachers/teacher${user.code}/likes/emotions${newsId}/`).get().then((snapshot) => {
-                            let emotions = snapshot.val()
-    
-                            if (emotions === 'like') {
-                                const likePostElem = document.getElementById(`likePostIcon${newsId}`)
-    
-                                likePostElem.className = 'fas fa-heart'
-                            } else if (emotions === 'dislike') {
-                                const dislikePostElem = document.getElementById(`dislikePostIcon${newsId}`)
-    
-                                dislikePostElem.className = 'fas fa-thumbs-down'
-                            }
-                        })
-                    ; break;
-                }
-            });
-        });
-    }
+              });
+
+            switch (user.who) {
+              case 'student':
+                firebase
+                  .database()
+                  .ref(
+                    `school${
+                      user.school
+                    }/students/student${user.fullName.toLowerCase()} ${userClass.toLowerCase()}/likes/emotions${newsId}/`,
+                  )
+                  .get()
+                  .then((snapshot) => {
+                    let emotions = snapshot.val();
+
+                    if (emotions === 'like') {
+                      const likePostElem = document.getElementById(`likePostIcon${newsId}`);
+
+                      likePostElem.className = 'fas fa-heart';
+                    } else if (emotions === 'dislike') {
+                      const dislikePostElem = document.getElementById(`dislikePostIcon${newsId}`);
+
+                      dislikePostElem.className = 'fas fa-thumbs-down';
+                    }
+                  });
+                break;
+              case 'teacher':
+                firebase
+                  .database()
+                  .ref(`school${user.school}/teachers/teacher${user.code}/likes/emotions${newsId}/`)
+                  .get()
+                  .then((snapshot) => {
+                    let emotions = snapshot.val();
+
+                    if (emotions === 'like') {
+                      const likePostElem = document.getElementById(`likePostIcon${newsId}`);
+
+                      likePostElem.className = 'fas fa-heart';
+                    } else if (emotions === 'dislike') {
+                      const dislikePostElem = document.getElementById(`dislikePostIcon${newsId}`);
+
+                      dislikePostElem.className = 'fas fa-thumbs-down';
+                    }
+                  });
+                break;
+            }
+          });
+      });
+  }
 }
 
 // create news
 function createNews() {
-    const nameNews = document.getElementById('name-news').value;
-    const textNews = document.getElementById('text-news').value;
+  const nameNews = document.getElementById('name-news').value;
+  const textNews = document.getElementById('text-news').value;
 
-    const showForAll = document.getElementById('showNewsForAll').checked;
-    const showForClass = document.getElementById('showNewsForClass').checked;
-    const showForNotClass = document.getElementById('showNewsForNotClass').checked;
+  const showForAll = document.getElementById('showNewsForAll').checked;
+  const showForClass = document.getElementById('showNewsForClass').checked;
+  const showForNotClass = document.getElementById('showNewsForNotClass').checked;
 
-    const select_class = document.getElementById("select-class");
-    const value_notclass = select_class.value;
+  const select_class = document.getElementById('select-class');
+  const value_notclass = select_class.value;
 
-    const select_letter = document.getElementById("select-letter");
-    const value_notletter = select_letter.value;
+  const select_letter = document.getElementById('select-letter');
+  const value_notletter = select_letter.value;
 
-    const showMyName = document.getElementById('showMyNameNews').checked;
+  const showMyName = document.getElementById('showMyNameNews').checked;
 
-    const user = JSON.parse(localStorage.getItem('user'));
+  const user = JSON.parse(localStorage.getItem('user'));
 
-    if (!nameNews || !textNews) {
+  if (!nameNews || !textNews) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Заполните все поля!',
+    });
+  } else {
+    const newsId = getRandId();
+    console.log(showForClass);
+
+    if (
+      showForNotClass === true &&
+      value_notclass != 'Выберете класс' &&
+      value_notletter != 'Выберете букву'
+    ) {
+      value_selectes = value_notclass + value_notletter;
+
+      if (value_notclass == 'Выберете класс' || value_notletter == 'Выберете букву') {
         Swal.fire({
-            icon: 'error',
-            title: 'Заполните все поля!',
+          icon: 'error',
+          title: 'Заполните все поля!',
         });
-    } else {
-        const newsId = getRandId();
-        console.log(showForClass);
+      } else if (showMyName === true) {
+        firebase
+          .database()
+          .ref(`school${user.school}/news${value_selectes}/${newsId}`)
+          .set({
+            nameNews: nameNews,
+            textNews: textNews,
+            fullName: user.fullName,
+            klassNews: value_selectes,
+            newsId: newsId,
+            likes: 0,
+            dislikes: 0,
+            date: {
+              day: date.getDate(),
+              month: date.getMonth() + 1,
+              year: date.getFullYear(),
+            },
+          });
 
-        if (showForNotClass === true && (value_notclass != "Выберете класс" && value_notletter != "Выберете букву") ) {
-            value_selectes = value_notclass + value_notletter
+        firebase
+          .database()
+          .ref(`school${user.school}/teachers/teacher${user.code}/newsForNotClass/news${newsId}`)
+          .set({
+            newsId: newsId,
+            klass: value_selectes,
+          });
+      } else {
+        firebase
+          .database()
+          .ref(`school${user.school}/news${value_selectes}/${newsId}`)
+          .set({
+            nameNews: nameNews,
+            textNews: textNews,
+            newsId: newsId,
+            klassNews: value_selectes,
+            likes: 0,
+            dislikes: 0,
+            date: {
+              day: date.getDate(),
+              month: date.getMonth() + 1,
+              year: date.getFullYear(),
+            },
+          });
 
-            if ((value_notclass == "Выберете класс") || (value_notletter == "Выберете букву")) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Заполните все поля!',
-                });
-            } else if (showMyName === true) {
-                    firebase.database().ref(`school${user.school}/news${value_selectes}/${newsId}`).set({
-                        nameNews: nameNews,
-                        textNews: textNews,
-                        fullName: user.fullName,
-                        klassNews: value_selectes,
-                        newsId: newsId,
-                        likes: 0,
-                        dislikes: 0,
-                        date: {
-                            day: date.getDate(),
-                            month: date.getMonth() + 1,
-                            year: date.getFullYear(),
-                        }
-                    });
-
-                    firebase.database().ref(`school${user.school}/teachers/teacher${user.code}/newsForNotClass/news${newsId}`).set({
-                        newsId: newsId,
-                        klass: value_selectes
-                    });
-                } else {
-                    firebase.database().ref(`school${user.school}/news${value_selectes}/${newsId}`).set({
-                        nameNews: nameNews,
-                        textNews: textNews,
-                        newsId: newsId,
-                        klassNews: value_selectes,
-                        likes: 0,
-                        dislikes: 0,
-                        date: {
-                            day: date.getDate(),
-                            month: date.getMonth() + 1,
-                            year: date.getFullYear(),
-                        }
-                    });
-
-                    firebase.database().ref(`school${user.school}/teachers/teacher${user.code}/newsForNotClass/news${newsId}`).set({
-                        newsId: newsId,
-                        klass: value_selectes
-                    });
-                }
-        } else if (showForAll === true) {
-            if (showMyName === true) {
-                firebase.database().ref(`school${user.school}/news/${newsId}`).set({
-                    nameNews: nameNews,
-                    textNews: textNews,
-                    fullName: user.fullName,
-                    newsId: newsId,
-                    likes: 0,
-                    dislikes: 0,
-                    date: {
-                        day: date.getDate(),
-                        month: date.getMonth() + 1,
-                        year: date.getFullYear(),
-                    }
-                });
-            } else {
-                firebase.database().ref(`school${user.school}/news/${newsId}`).set({
-                    nameNews: nameNews,
-                    textNews: textNews,
-                    newsId: newsId,
-                    likes: 0,
-                    dislikes: 0,
-                    date: {
-                        day: date.getDate(),
-                        month: date.getMonth() + 1,
-                        year: date.getFullYear(),
-                    }
-                });
-            }
-        } else if (showForClass === true) {
-            if (showMyName === true) {
-                console.log('helllo!');
-                firebase.database().ref(`school${user.school}/news${user.myClass}/${newsId}`).set({
-                    nameNews: nameNews,
-                    textNews: textNews,
-                    fullName: user.fullName,
-                    newsId: newsId,
-                    likes: 0,
-                    dislikes: 0,
-                    date: {
-                        day: date.getDate(),
-                        month: date.getMonth() + 1,
-                        year: date.getFullYear(),
-                    }
-                });
-            } else {
-                firebase.database().ref(`school${user.school}/news${user.myClass}/${newsId}`).set({
-                    nameNews: nameNews,
-                    textNews: textNews,
-                    newsId: newsId,
-                    likes: 0,
-                    dislikes: 0,
-                    date: {
-                        day: date.getDate(),
-                        month: date.getMonth() + 1,
-                        year: date.getFullYear(),
-                    }
-                });
-            }
-        } 
+        firebase
+          .database()
+          .ref(`school${user.school}/teachers/teacher${user.code}/newsForNotClass/news${newsId}`)
+          .set({
+            newsId: newsId,
+            klass: value_selectes,
+          });
+      }
+    } else if (showForAll === true) {
+      if (showMyName === true) {
+        firebase
+          .database()
+          .ref(`school${user.school}/news/${newsId}`)
+          .set({
+            nameNews: nameNews,
+            textNews: textNews,
+            fullName: user.fullName,
+            newsId: newsId,
+            likes: 0,
+            dislikes: 0,
+            date: {
+              day: date.getDate(),
+              month: date.getMonth() + 1,
+              year: date.getFullYear(),
+            },
+          });
+      } else {
+        firebase
+          .database()
+          .ref(`school${user.school}/news/${newsId}`)
+          .set({
+            nameNews: nameNews,
+            textNews: textNews,
+            newsId: newsId,
+            likes: 0,
+            dislikes: 0,
+            date: {
+              day: date.getDate(),
+              month: date.getMonth() + 1,
+              year: date.getFullYear(),
+            },
+          });
+      }
+    } else if (showForClass === true) {
+      if (showMyName === true) {
+        console.log('helllo!');
+        firebase
+          .database()
+          .ref(`school${user.school}/news${user.myClass}/${newsId}`)
+          .set({
+            nameNews: nameNews,
+            textNews: textNews,
+            fullName: user.fullName,
+            newsId: newsId,
+            likes: 0,
+            dislikes: 0,
+            date: {
+              day: date.getDate(),
+              month: date.getMonth() + 1,
+              year: date.getFullYear(),
+            },
+          });
+      } else {
+        firebase
+          .database()
+          .ref(`school${user.school}/news${user.myClass}/${newsId}`)
+          .set({
+            nameNews: nameNews,
+            textNews: textNews,
+            newsId: newsId,
+            likes: 0,
+            dislikes: 0,
+            date: {
+              day: date.getDate(),
+              month: date.getMonth() + 1,
+              year: date.getFullYear(),
+            },
+          });
+      }
     }
+  }
 }
 
 // comment post
 function postComment(newsId, fullName, school, klass = '') {
-    const commentInput = document.getElementById(`commentInput${newsId}`).value;
-    const commentId = getRandId();
+  const commentInput = document.getElementById(`commentInput${newsId}`).value;
+  const commentId = getRandId();
 
-    if (commentInput != '') {
-        if (klass === '') {
-            firebase.database().ref(`school${school}/news/${newsId}/comments/comment${commentId}`).set({
-                comment: commentInput,
-                fullName: fullName
-            });
-        } else if (klass !== '') {
-            firebase.database().ref(`school${school}/news${klass}/${newsId}/comments/comment${commentId}`).set({
-                comment: commentInput,
-                fullName: fullName
-            });
-        }
+  if (commentInput != '') {
+    if (klass === '') {
+      firebase.database().ref(`school${school}/news/${newsId}/comments/comment${commentId}`).set({
+        comment: commentInput,
+        fullName: fullName,
+      });
+    } else if (klass !== '') {
+      firebase
+        .database()
+        .ref(`school${school}/news${klass}/${newsId}/comments/comment${commentId}`)
+        .set({
+          comment: commentInput,
+          fullName: fullName,
+        });
     }
+  }
 }
 
 // like post
 function likePost(newsId, school, klass = '') {
-    const user = JSON.parse(localStorage.getItem('user'));
+  const user = JSON.parse(localStorage.getItem('user'));
 
-    switch (user.who) {
-        case 'student':
-            if (klass === '') {
-                firebase.database().ref(`school${school}/students/student${user.fullName.toLowerCase()} ${user.klass.toLowerCase()}/likes/emotions${newsId}/`).get().then((snapshot) => {
-                    let emotions = snapshot.val();
+  switch (user.who) {
+    case 'student':
+      if (klass === '') {
+        firebase
+          .database()
+          .ref(
+            `school${school}/students/student${user.fullName.toLowerCase()} ${user.klass.toLowerCase()}/likes/emotions${newsId}/`,
+          )
+          .get()
+          .then((snapshot) => {
+            let emotions = snapshot.val();
 
-                    if (emotions === 'dislike') {
-                        firebase.database().ref(`school${school}/news/${newsId}`).get().then((snapshot) => {
-                            likes = snapshot.val().likes;
-                            likes++;
+            if (emotions === 'dislike') {
+              firebase
+                .database()
+                .ref(`school${school}/news/${newsId}`)
+                .get()
+                .then((snapshot) => {
+                  likes = snapshot.val().likes;
+                  likes++;
 
-                            dislikes = snapshot.val().dislikes;
-                            dislikes--;
-                        }).then(() => {
-                            firebase.database().ref(`school${school}/news/${newsId}/likes`).set(likes);
-                            firebase.database().ref(`school${school}/news/${newsId}/dislikes`).set(dislikes);
+                  dislikes = snapshot.val().dislikes;
+                  dislikes--;
+                })
+                .then(() => {
+                  firebase.database().ref(`school${school}/news/${newsId}/likes`).set(likes);
+                  firebase.database().ref(`school${school}/news/${newsId}/dislikes`).set(dislikes);
 
-                            const likePostElem = document.getElementById(`likePost${newsId}`)
-                            const dislikePostElem = document.getElementById(`dislikePost${newsId}`)
+                  const likePostElem = document.getElementById(`likePost${newsId}`);
+                  const dislikePostElem = document.getElementById(`dislikePost${newsId}`);
 
-                            likePostElem.innerHTML = `<i class="fas fa-heart"></i> ${likes}`;
-                            dislikePostElem.innerHTML = `<i class="far fa-thumbs-down"></i> ${dislikes}`;
+                  likePostElem.innerHTML = `<i class="fas fa-heart"></i> ${likes}`;
+                  dislikePostElem.innerHTML = `<i class="far fa-thumbs-down"></i> ${dislikes}`;
 
-                            firebase.database().ref(`school${school}/students/student${user.fullName.toLowerCase()} ${user.klass.toLowerCase()}/likes/emotions${newsId}/`).set('like');
-                        });
-                    } else if (emotions === null) {
-                        firebase.database().ref(`school${school}/news/${newsId}`).get().then((snapshot) => {
-                            likes = snapshot.val().likes;
-                            likes++;
-                        }).then(() => {
-                            firebase.database().ref(`school${school}/news/${newsId}/likes`).set(likes);
-
-                            const likePostElem = document.getElementById(`likePost${newsId}`)
-                            likePostElem.innerHTML = `<i class="fas fa-heart"></i> ${likes}`;
-
-                            firebase.database().ref(`school${school}/students/student${user.fullName.toLowerCase()} ${user.klass.toLowerCase()}/likes/emotions${newsId}/`).set('like');
-                        });
-                    }
+                  firebase
+                    .database()
+                    .ref(
+                      `school${school}/students/student${user.fullName.toLowerCase()} ${user.klass.toLowerCase()}/likes/emotions${newsId}/`,
+                    )
+                    .set('like');
                 });
-            } else if (klass !== '') {
-                firebase.database().ref(`school${school}/students/student${user.fullName.toLowerCase()} ${user.klass.toLowerCase()}/likes/emotions${newsId}/`).get().then((snapshot) => {
-                    let emotions = snapshot.val();
-                    if (emotions === 'dislike') {
-                        firebase.database().ref(`school${school}/news${klass}/${newsId}`).get().then((snapshot) => {
-                            likes = snapshot.val().likes;
-                            likes++;
+            } else if (emotions === null) {
+              firebase
+                .database()
+                .ref(`school${school}/news/${newsId}`)
+                .get()
+                .then((snapshot) => {
+                  likes = snapshot.val().likes;
+                  likes++;
+                })
+                .then(() => {
+                  firebase.database().ref(`school${school}/news/${newsId}/likes`).set(likes);
 
-                            dislikes = snapshot.val().dislikes;
-                            dislikes--;
-                        }).then(() => {
-                            firebase.database().ref(`school${school}/news${klass}/${newsId}/likes`).set(likes);
-                            firebase.database().ref(`school${school}/news${klass}/${newsId}/dislikes`).set(dislikes);
+                  const likePostElem = document.getElementById(`likePost${newsId}`);
+                  likePostElem.innerHTML = `<i class="fas fa-heart"></i> ${likes}`;
 
-                            const likePostElem = document.getElementById(`likePost${newsId}`)
-                            const dislikePostElem = document.getElementById(`dislikePost${newsId}`)
-
-                            likePostElem.innerHTML = `<i class="fas fa-heart"></i> ${likes}`;
-                            dislikePostElem.innerHTML = `<i class="far fa-thumbs-down"></i> ${dislikes}`;
-
-                            firebase.database().ref(`school${school}/students/student${user.fullName.toLowerCase()} ${user.klass.toLowerCase()}/likes/emotions${newsId}/`).set('like');
-                        });
-                    } else if (emotions === null) {
-                        firebase.database().ref(`school${school}/news${klass}/${newsId}`).get().then((snapshot) => {
-                            likes = snapshot.val().likes;
-                            likes++;
-                        }).then(() => {
-                            firebase.database().ref(`school${school}/news${klass}/${newsId}/likes`).set(likes);
-
-                            const likePostElem = document.getElementById(`likePost${newsId}`)
-                            likePostElem.innerHTML = `<i class="fas fa-heart"></i> ${likes}`;
-
-                            firebase.database().ref(`school${school}/students/student${user.fullName.toLowerCase()} ${user.klass.toLowerCase()}/likes/emotions${newsId}/`).set('like');
-                        });
-                    }
+                  firebase
+                    .database()
+                    .ref(
+                      `school${school}/students/student${user.fullName.toLowerCase()} ${user.klass.toLowerCase()}/likes/emotions${newsId}/`,
+                    )
+                    .set('like');
                 });
             }
-        ; break;
+          });
+      } else if (klass !== '') {
+        firebase
+          .database()
+          .ref(
+            `school${school}/students/student${user.fullName.toLowerCase()} ${user.klass.toLowerCase()}/likes/emotions${newsId}/`,
+          )
+          .get()
+          .then((snapshot) => {
+            let emotions = snapshot.val();
+            if (emotions === 'dislike') {
+              firebase
+                .database()
+                .ref(`school${school}/news${klass}/${newsId}`)
+                .get()
+                .then((snapshot) => {
+                  likes = snapshot.val().likes;
+                  likes++;
 
-        case 'teacher':
-            if (klass === '') {
-                firebase.database().ref(`school${school}/teachers/teacher${user.code}/likes/emotions${newsId}/`).get().then((snapshot) => {
-                    let emotions = snapshot.val();
+                  dislikes = snapshot.val().dislikes;
+                  dislikes--;
+                })
+                .then(() => {
+                  firebase
+                    .database()
+                    .ref(`school${school}/news${klass}/${newsId}/likes`)
+                    .set(likes);
+                  firebase
+                    .database()
+                    .ref(`school${school}/news${klass}/${newsId}/dislikes`)
+                    .set(dislikes);
 
-                    if (emotions === 'dislike') {
-                        firebase.database().ref(`school${school}/news/${newsId}`).get().then((snapshot) => {
-                            likes = snapshot.val().likes;
-                            likes++;
+                  const likePostElem = document.getElementById(`likePost${newsId}`);
+                  const dislikePostElem = document.getElementById(`dislikePost${newsId}`);
 
-                            dislikes = snapshot.val().dislikes;
-                            dislikes--;
-                        }).then(() => {
-                            firebase.database().ref(`school${school}/news/${newsId}/likes`).set(likes);
-                            firebase.database().ref(`school${school}/news/${newsId}/dislikes`).set(dislikes);
+                  likePostElem.innerHTML = `<i class="fas fa-heart"></i> ${likes}`;
+                  dislikePostElem.innerHTML = `<i class="far fa-thumbs-down"></i> ${dislikes}`;
 
-                            const likePostElem = document.getElementById(`likePost${newsId}`)
-                            const dislikePostElem = document.getElementById(`dislikePost${newsId}`)
-
-                            likePostElem.innerHTML = `<i class="fas fa-heart"></i> ${likes}`;
-                            dislikePostElem.innerHTML = `<i class="far fa-thumbs-down"></i> ${dislikes}`;
-
-                            firebase.database().ref(`school${school}/teachers/teacher${user.code}/likes/emotions${newsId}`).set('like');
-                        });
-                    } else if (emotions === null) {
-                        firebase.database().ref(`school${school}/news/${newsId}`).get().then((snapshot) => {
-                            likes = snapshot.val().likes;
-                            likes++;
-                        }).then(() => {
-                            firebase.database().ref(`school${school}/news/${newsId}/likes`).set(likes);
-
-                            const likePostElem = document.getElementById(`likePost${newsId}`)
-                            likePostElem.innerHTML = `<i class="fas fa-heart"></i> ${likes}`;
-
-                            firebase.database().ref(`school${school}/teachers/teacher${user.code}/likes/emotions${newsId}`).set('like');
-                        });
-                    }
+                  firebase
+                    .database()
+                    .ref(
+                      `school${school}/students/student${user.fullName.toLowerCase()} ${user.klass.toLowerCase()}/likes/emotions${newsId}/`,
+                    )
+                    .set('like');
                 });
-            } else if (klass !== '') {
-                firebase.database().ref(`school${school}/teachers/teacher${user.code}/likes/emotions${newsId}/`).get().then((snapshot) => {
-                    let emotions = snapshot.val();
-                    if (emotions === 'dislike') {
-                        firebase.database().ref(`school${school}/news${klass}/${newsId}`).get().then((snapshot) => {
-                            likes = snapshot.val().likes;
-                            likes++;
+            } else if (emotions === null) {
+              firebase
+                .database()
+                .ref(`school${school}/news${klass}/${newsId}`)
+                .get()
+                .then((snapshot) => {
+                  likes = snapshot.val().likes;
+                  likes++;
+                })
+                .then(() => {
+                  firebase
+                    .database()
+                    .ref(`school${school}/news${klass}/${newsId}/likes`)
+                    .set(likes);
 
-                            dislikes = snapshot.val().dislikes;
-                            dislikes--;
-                        }).then(() => {
-                            firebase.database().ref(`school${school}/news${klass}/${newsId}/likes`).set(likes);
-                            firebase.database().ref(`school${school}/news${klass}/${newsId}/dislikes`).set(dislikes);
+                  const likePostElem = document.getElementById(`likePost${newsId}`);
+                  likePostElem.innerHTML = `<i class="fas fa-heart"></i> ${likes}`;
 
-                            const likePostElem = document.getElementById(`likePost${newsId}`)
-                            const dislikePostElem = document.getElementById(`dislikePost${newsId}`)
-
-                            likePostElem.innerHTML = `<i class="fas fa-heart"></i> ${likes}`;
-                            dislikePostElem.innerHTML = `<i class="far fa-thumbs-down"></i> ${dislikes}`;
-
-                            firebase.database().ref(`school${school}/teachers/teacher${user.code}/likes/emotions${newsId}`).set('like');
-                        });
-                    } else if (emotions === null) {
-                        firebase.database().ref(`school${school}/news${klass}/${newsId}`).get().then((snapshot) => {
-                            likes = snapshot.val().likes;
-                            likes++;
-                        }).then(() => {
-                            firebase.database().ref(`school${school}/news${klass}/${newsId}/likes`).set(likes);
-
-                            const likePostElem = document.getElementById(`likePost${newsId}`)
-                            likePostElem.innerHTML = `<i class="fas fa-heart"></i> ${likes}`;
-
-                            firebase.database().ref(`school${school}/teachers/teacher${user.code}/likes/emotions${newsId}`).set('like');
-                        });
-                    }
+                  firebase
+                    .database()
+                    .ref(
+                      `school${school}/students/student${user.fullName.toLowerCase()} ${user.klass.toLowerCase()}/likes/emotions${newsId}/`,
+                    )
+                    .set('like');
                 });
             }
-        ; break;
-    }
+          });
+      }
+      break;
+
+    case 'teacher':
+      if (klass === '') {
+        firebase
+          .database()
+          .ref(`school${school}/teachers/teacher${user.code}/likes/emotions${newsId}/`)
+          .get()
+          .then((snapshot) => {
+            let emotions = snapshot.val();
+
+            if (emotions === 'dislike') {
+              firebase
+                .database()
+                .ref(`school${school}/news/${newsId}`)
+                .get()
+                .then((snapshot) => {
+                  likes = snapshot.val().likes;
+                  likes++;
+
+                  dislikes = snapshot.val().dislikes;
+                  dislikes--;
+                })
+                .then(() => {
+                  firebase.database().ref(`school${school}/news/${newsId}/likes`).set(likes);
+                  firebase.database().ref(`school${school}/news/${newsId}/dislikes`).set(dislikes);
+
+                  const likePostElem = document.getElementById(`likePost${newsId}`);
+                  const dislikePostElem = document.getElementById(`dislikePost${newsId}`);
+
+                  likePostElem.innerHTML = `<i class="fas fa-heart"></i> ${likes}`;
+                  dislikePostElem.innerHTML = `<i class="far fa-thumbs-down"></i> ${dislikes}`;
+
+                  firebase
+                    .database()
+                    .ref(`school${school}/teachers/teacher${user.code}/likes/emotions${newsId}`)
+                    .set('like');
+                });
+            } else if (emotions === null) {
+              firebase
+                .database()
+                .ref(`school${school}/news/${newsId}`)
+                .get()
+                .then((snapshot) => {
+                  likes = snapshot.val().likes;
+                  likes++;
+                })
+                .then(() => {
+                  firebase.database().ref(`school${school}/news/${newsId}/likes`).set(likes);
+
+                  const likePostElem = document.getElementById(`likePost${newsId}`);
+                  likePostElem.innerHTML = `<i class="fas fa-heart"></i> ${likes}`;
+
+                  firebase
+                    .database()
+                    .ref(`school${school}/teachers/teacher${user.code}/likes/emotions${newsId}`)
+                    .set('like');
+                });
+            }
+          });
+      } else if (klass !== '') {
+        firebase
+          .database()
+          .ref(`school${school}/teachers/teacher${user.code}/likes/emotions${newsId}/`)
+          .get()
+          .then((snapshot) => {
+            let emotions = snapshot.val();
+            if (emotions === 'dislike') {
+              firebase
+                .database()
+                .ref(`school${school}/news${klass}/${newsId}`)
+                .get()
+                .then((snapshot) => {
+                  likes = snapshot.val().likes;
+                  likes++;
+
+                  dislikes = snapshot.val().dislikes;
+                  dislikes--;
+                })
+                .then(() => {
+                  firebase
+                    .database()
+                    .ref(`school${school}/news${klass}/${newsId}/likes`)
+                    .set(likes);
+                  firebase
+                    .database()
+                    .ref(`school${school}/news${klass}/${newsId}/dislikes`)
+                    .set(dislikes);
+
+                  const likePostElem = document.getElementById(`likePost${newsId}`);
+                  const dislikePostElem = document.getElementById(`dislikePost${newsId}`);
+
+                  likePostElem.innerHTML = `<i class="fas fa-heart"></i> ${likes}`;
+                  dislikePostElem.innerHTML = `<i class="far fa-thumbs-down"></i> ${dislikes}`;
+
+                  firebase
+                    .database()
+                    .ref(`school${school}/teachers/teacher${user.code}/likes/emotions${newsId}`)
+                    .set('like');
+                });
+            } else if (emotions === null) {
+              firebase
+                .database()
+                .ref(`school${school}/news${klass}/${newsId}`)
+                .get()
+                .then((snapshot) => {
+                  likes = snapshot.val().likes;
+                  likes++;
+                })
+                .then(() => {
+                  firebase
+                    .database()
+                    .ref(`school${school}/news${klass}/${newsId}/likes`)
+                    .set(likes);
+
+                  const likePostElem = document.getElementById(`likePost${newsId}`);
+                  likePostElem.innerHTML = `<i class="fas fa-heart"></i> ${likes}`;
+
+                  firebase
+                    .database()
+                    .ref(`school${school}/teachers/teacher${user.code}/likes/emotions${newsId}`)
+                    .set('like');
+                });
+            }
+          });
+      }
+      break;
+  }
 }
 
 // dislike post
 function dislikePost(newsId, school, klass = '') {
-    const user = JSON.parse(localStorage.getItem('user'));
+  const user = JSON.parse(localStorage.getItem('user'));
 
-    switch (user.who) {
-        case 'student':
-            if (klass === '') {
-                firebase.database().ref(`school${school}/students/student${user.fullName.toLowerCase()} ${user.klass.toLowerCase()}/likes/emotions${newsId}/`).get().then((snapshot) => {
-                    let emotions = snapshot.val();
-                    if (emotions === 'like') {
-                        firebase.database().ref(`school${school}/news/${newsId}`).get().then((snapshot) => {
-                            dislikes = snapshot.val().dislikes;
-                            dislikes++;
+  switch (user.who) {
+    case 'student':
+      if (klass === '') {
+        firebase
+          .database()
+          .ref(
+            `school${school}/students/student${user.fullName.toLowerCase()} ${user.klass.toLowerCase()}/likes/emotions${newsId}/`,
+          )
+          .get()
+          .then((snapshot) => {
+            let emotions = snapshot.val();
+            if (emotions === 'like') {
+              firebase
+                .database()
+                .ref(`school${school}/news/${newsId}`)
+                .get()
+                .then((snapshot) => {
+                  dislikes = snapshot.val().dislikes;
+                  dislikes++;
 
-                            likes = snapshot.val().likes;
-                            likes--;
-                        }).then(() => {
-                            firebase.database().ref(`school${school}/news/${newsId}/likes`).set(likes);
-                            firebase.database().ref(`school${school}/news/${newsId}/dislikes`).set(dislikes);
+                  likes = snapshot.val().likes;
+                  likes--;
+                })
+                .then(() => {
+                  firebase.database().ref(`school${school}/news/${newsId}/likes`).set(likes);
+                  firebase.database().ref(`school${school}/news/${newsId}/dislikes`).set(dislikes);
 
-                            const likePostElem = document.getElementById(`likePost${newsId}`)
-                            const dislikePostElem = document.getElementById(`dislikePost${newsId}`)
+                  const likePostElem = document.getElementById(`likePost${newsId}`);
+                  const dislikePostElem = document.getElementById(`dislikePost${newsId}`);
 
-                            likePostElem.innerHTML = `<i class="far fa-heart"></i> ${likes}`;
-                            dislikePostElem.innerHTML = `<i class="fas fa-thumbs-down"></i> ${dislikes}`;
+                  likePostElem.innerHTML = `<i class="far fa-heart"></i> ${likes}`;
+                  dislikePostElem.innerHTML = `<i class="fas fa-thumbs-down"></i> ${dislikes}`;
 
-                            firebase.database().ref(`school${school}/students/student${user.fullName.toLowerCase()} ${user.klass.toLowerCase()}/likes/emotions${newsId}/`).set('dislike');
-                        });
-                    } else if (emotions === null) {
-                        firebase.database().ref(`school${school}/news/${newsId}`).get().then((snapshot) => {
-                            dislikes = snapshot.val().dislikes;
-                            dislikes++;
-                        }).then(() => {
-                            firebase.database().ref(`school${school}/news/${newsId}/dislikes`).set(dislikes);
-
-                            const dislikePostElem = document.getElementById(`dislikePost${newsId}`)
-                            dislikePostElem.innerHTML = `<i class="fas fa-thumbs-down"></i> ${dislikes}`;
-
-                            firebase.database().ref(`school${school}/students/student${user.fullName.toLowerCase()} ${user.klass.toLowerCase()}/likes/emotions${newsId}/`).set('dislike');
-                        });
-                    }
+                  firebase
+                    .database()
+                    .ref(
+                      `school${school}/students/student${user.fullName.toLowerCase()} ${user.klass.toLowerCase()}/likes/emotions${newsId}/`,
+                    )
+                    .set('dislike');
                 });
-            } else if (klass !== '') {
-                firebase.database().ref(`school${school}/students/student${user.fullName.toLowerCase()} ${user.klass.toLowerCase()}/likes/emotions${newsId}/`).get().then((snapshot) => {
-                    let emotions = snapshot.val();
+            } else if (emotions === null) {
+              firebase
+                .database()
+                .ref(`school${school}/news/${newsId}`)
+                .get()
+                .then((snapshot) => {
+                  dislikes = snapshot.val().dislikes;
+                  dislikes++;
+                })
+                .then(() => {
+                  firebase.database().ref(`school${school}/news/${newsId}/dislikes`).set(dislikes);
 
-                    if (emotions === 'like') {
-                        firebase.database().ref(`school${school}/news${klass}/${newsId}`).get().then((snapshot) => {
-                            dislikes = snapshot.val().dislikes;
-                            dislikes++;
+                  const dislikePostElem = document.getElementById(`dislikePost${newsId}`);
+                  dislikePostElem.innerHTML = `<i class="fas fa-thumbs-down"></i> ${dislikes}`;
 
-                            likes = snapshot.val().likes;
-                            likes--;
-                        }).then(() => {
-                            firebase.database().ref(`school${school}/news${klass}/${newsId}/likes`).set(likes);
-                            firebase.database().ref(`school${school}/news${klass}/${newsId}/dislikes`).set(dislikes);
-
-                            const likePostElem = document.getElementById(`likePost${newsId}`)
-                            const dislikePostElem = document.getElementById(`dislikePost${newsId}`)
-
-                            likePostElem.innerHTML = `<i class="far fa-heart"></i> ${likes}`;
-                            dislikePostElem.innerHTML = `<i class="fas fa-thumbs-down"></i> ${dislikes}`;
-
-                            firebase.database().ref(`school${school}/teachers/teacher${user.code}/likes/emotions${newsId}`).set('dislike');
-                        });
-                    } else if (emotions === null) {
-                        firebase.database().ref(`school${school}/news${klass}/${newsId}`).get().then((snapshot) => {
-                            dislikes = snapshot.val().dislikes;
-                            dislikes++;
-                        }).then(() => {
-                            firebase.database().ref(`school${school}/news${klass}/${newsId}/dislikes`).set(dislikes);
-
-                            const dislikePostElem = document.getElementById(`dislikePost${newsId}`)
-                            dislikePostElem.innerHTML = `<i class="fas fa-thumbs-down"></i> ${dislikes}`;
-
-                            firebase.database().ref(`school${school}/students/student${user.fullName.toLowerCase()} ${user.klass.toLowerCase()}/likes/emotions${newsId}/`).set('dislike');
-                        });
-                    }
+                  firebase
+                    .database()
+                    .ref(
+                      `school${school}/students/student${user.fullName.toLowerCase()} ${user.klass.toLowerCase()}/likes/emotions${newsId}/`,
+                    )
+                    .set('dislike');
                 });
             }
-        ; break;
-        case 'teacher':
-            if (klass === '') {
-                firebase.database().ref(`school${school}/teachers/teacher${user.code}/likes/emotions${newsId}/`).get().then((snapshot) => {
-                    let emotions = snapshot.val();
-                    if (emotions === 'like') {
-                        firebase.database().ref(`school${school}/news/${newsId}`).get().then((snapshot) => {
-                            dislikes = snapshot.val().dislikes;
-                            dislikes++;
+          });
+      } else if (klass !== '') {
+        firebase
+          .database()
+          .ref(
+            `school${school}/students/student${user.fullName.toLowerCase()} ${user.klass.toLowerCase()}/likes/emotions${newsId}/`,
+          )
+          .get()
+          .then((snapshot) => {
+            let emotions = snapshot.val();
 
-                            likes = snapshot.val().likes;
-                            likes--;
-                        }).then(() => {
-                            firebase.database().ref(`school${school}/news/${newsId}/likes`).set(likes);
-                            firebase.database().ref(`school${school}/news/${newsId}/dislikes`).set(dislikes);
+            if (emotions === 'like') {
+              firebase
+                .database()
+                .ref(`school${school}/news${klass}/${newsId}`)
+                .get()
+                .then((snapshot) => {
+                  dislikes = snapshot.val().dislikes;
+                  dislikes++;
 
-                            const likePostElem = document.getElementById(`likePost${newsId}`)
-                            const dislikePostElem = document.getElementById(`dislikePost${newsId}`)
+                  likes = snapshot.val().likes;
+                  likes--;
+                })
+                .then(() => {
+                  firebase
+                    .database()
+                    .ref(`school${school}/news${klass}/${newsId}/likes`)
+                    .set(likes);
+                  firebase
+                    .database()
+                    .ref(`school${school}/news${klass}/${newsId}/dislikes`)
+                    .set(dislikes);
 
-                            likePostElem.innerHTML = `<i class="far fa-heart"></i> ${likes}`;
-                            dislikePostElem.innerHTML = `<i class="fas fa-thumbs-down"></i> ${dislikes}`;
+                  const likePostElem = document.getElementById(`likePost${newsId}`);
+                  const dislikePostElem = document.getElementById(`dislikePost${newsId}`);
 
-                            firebase.database().ref(`school${school}/teachers/teacher${user.code}/likes/emotions${newsId}`).set('dislike');
-                        });
-                    } else if (emotions === null) {
-                        firebase.database().ref(`school${school}/news/${newsId}`).get().then((snapshot) => {
-                            dislikes = snapshot.val().dislikes;
-                            dislikes++;
-                        }).then(() => {
-                            firebase.database().ref(`school${school}/news/${newsId}/dislikes`).set(dislikes);
+                  likePostElem.innerHTML = `<i class="far fa-heart"></i> ${likes}`;
+                  dislikePostElem.innerHTML = `<i class="fas fa-thumbs-down"></i> ${dislikes}`;
 
-                            const dislikePostElem = document.getElementById(`dislikePost${newsId}`)
-                            dislikePostElem.innerHTML = `<i class="fas fa-thumbs-down"></i> ${dislikes}`;
-
-                            firebase.database().ref(`school${school}/teachers/teacher${user.code}/likes/emotions${newsId}`).set('dislike');
-                        });
-                    }
+                  firebase
+                    .database()
+                    .ref(`school${school}/teachers/teacher${user.code}/likes/emotions${newsId}`)
+                    .set('dislike');
                 });
-            } else if (klass !== '') {
-                firebase.database().ref(`school${school}/teachers/teacher${user.code}/likes/emotions${newsId}/`).get().then((snapshot) => {
-                    let emotions = snapshot.val();
+            } else if (emotions === null) {
+              firebase
+                .database()
+                .ref(`school${school}/news${klass}/${newsId}`)
+                .get()
+                .then((snapshot) => {
+                  dislikes = snapshot.val().dislikes;
+                  dislikes++;
+                })
+                .then(() => {
+                  firebase
+                    .database()
+                    .ref(`school${school}/news${klass}/${newsId}/dislikes`)
+                    .set(dislikes);
 
-                    if (emotions === 'like') {
-                        firebase.database().ref(`school${school}/news${klass}/${newsId}`).get().then((snapshot) => {
-                            dislikes = snapshot.val().dislikes;
-                            dislikes++;
+                  const dislikePostElem = document.getElementById(`dislikePost${newsId}`);
+                  dislikePostElem.innerHTML = `<i class="fas fa-thumbs-down"></i> ${dislikes}`;
 
-                            likes = snapshot.val().likes;
-                            likes--;
-                        }).then(() => {
-                            firebase.database().ref(`school${school}/news${klass}/${newsId}/likes`).set(likes);
-                            firebase.database().ref(`school${school}/news${klass}/${newsId}/dislikes`).set(dislikes);
-
-                            const likePostElem = document.getElementById(`likePost${newsId}`)
-                            const dislikePostElem = document.getElementById(`dislikePost${newsId}`)
-
-                            likePostElem.innerHTML = `<i class="far fa-heart"></i> ${likes}`;
-                            dislikePostElem.innerHTML = `<i class="fas fa-thumbs-down"></i> ${dislikes}`;
-
-                            firebase.database().ref(`school${school}/teachers/teacher${user.code}/likes/emotions${newsId}`).set('dislike');
-                        });
-                    } else if (emotions === null) {
-                        console.log(`school${school}/news${klass}/${newsId}`);
-                        firebase.database().ref(`school${school}/news${klass}/${newsId}`).get().then((snapshot) => {
-                            dislikes = snapshot.val().dislikes;
-                            dislikes++;
-                        }).then(() => {
-                            firebase.database().ref(`school${school}/news${klass}/${newsId}/dislikes`).set(dislikes);
-
-                            const dislikePostElem = document.getElementById(`dislikePost${newsId}`)
-                            dislikePostElem.innerHTML = `<i class="fas fa-thumbs-down"></i> ${dislikes}`;
-
-                            firebase.database().ref(`school${school}/teachers/teacher${user.code}/likes/emotions${newsId}`).set('dislike');
-                        });
-                    }
+                  firebase
+                    .database()
+                    .ref(
+                      `school${school}/students/student${user.fullName.toLowerCase()} ${user.klass.toLowerCase()}/likes/emotions${newsId}/`,
+                    )
+                    .set('dislike');
                 });
             }
-        ; break;
-    }
+          });
+      }
+      break;
+    case 'teacher':
+      if (klass === '') {
+        firebase
+          .database()
+          .ref(`school${school}/teachers/teacher${user.code}/likes/emotions${newsId}/`)
+          .get()
+          .then((snapshot) => {
+            let emotions = snapshot.val();
+            if (emotions === 'like') {
+              firebase
+                .database()
+                .ref(`school${school}/news/${newsId}`)
+                .get()
+                .then((snapshot) => {
+                  dislikes = snapshot.val().dislikes;
+                  dislikes++;
+
+                  likes = snapshot.val().likes;
+                  likes--;
+                })
+                .then(() => {
+                  firebase.database().ref(`school${school}/news/${newsId}/likes`).set(likes);
+                  firebase.database().ref(`school${school}/news/${newsId}/dislikes`).set(dislikes);
+
+                  const likePostElem = document.getElementById(`likePost${newsId}`);
+                  const dislikePostElem = document.getElementById(`dislikePost${newsId}`);
+
+                  likePostElem.innerHTML = `<i class="far fa-heart"></i> ${likes}`;
+                  dislikePostElem.innerHTML = `<i class="fas fa-thumbs-down"></i> ${dislikes}`;
+
+                  firebase
+                    .database()
+                    .ref(`school${school}/teachers/teacher${user.code}/likes/emotions${newsId}`)
+                    .set('dislike');
+                });
+            } else if (emotions === null) {
+              firebase
+                .database()
+                .ref(`school${school}/news/${newsId}`)
+                .get()
+                .then((snapshot) => {
+                  dislikes = snapshot.val().dislikes;
+                  dislikes++;
+                })
+                .then(() => {
+                  firebase.database().ref(`school${school}/news/${newsId}/dislikes`).set(dislikes);
+
+                  const dislikePostElem = document.getElementById(`dislikePost${newsId}`);
+                  dislikePostElem.innerHTML = `<i class="fas fa-thumbs-down"></i> ${dislikes}`;
+
+                  firebase
+                    .database()
+                    .ref(`school${school}/teachers/teacher${user.code}/likes/emotions${newsId}`)
+                    .set('dislike');
+                });
+            }
+          });
+      } else if (klass !== '') {
+        firebase
+          .database()
+          .ref(`school${school}/teachers/teacher${user.code}/likes/emotions${newsId}/`)
+          .get()
+          .then((snapshot) => {
+            let emotions = snapshot.val();
+
+            if (emotions === 'like') {
+              firebase
+                .database()
+                .ref(`school${school}/news${klass}/${newsId}`)
+                .get()
+                .then((snapshot) => {
+                  dislikes = snapshot.val().dislikes;
+                  dislikes++;
+
+                  likes = snapshot.val().likes;
+                  likes--;
+                })
+                .then(() => {
+                  firebase
+                    .database()
+                    .ref(`school${school}/news${klass}/${newsId}/likes`)
+                    .set(likes);
+                  firebase
+                    .database()
+                    .ref(`school${school}/news${klass}/${newsId}/dislikes`)
+                    .set(dislikes);
+
+                  const likePostElem = document.getElementById(`likePost${newsId}`);
+                  const dislikePostElem = document.getElementById(`dislikePost${newsId}`);
+
+                  likePostElem.innerHTML = `<i class="far fa-heart"></i> ${likes}`;
+                  dislikePostElem.innerHTML = `<i class="fas fa-thumbs-down"></i> ${dislikes}`;
+
+                  firebase
+                    .database()
+                    .ref(`school${school}/teachers/teacher${user.code}/likes/emotions${newsId}`)
+                    .set('dislike');
+                });
+            } else if (emotions === null) {
+              console.log(`school${school}/news${klass}/${newsId}`);
+              firebase
+                .database()
+                .ref(`school${school}/news${klass}/${newsId}`)
+                .get()
+                .then((snapshot) => {
+                  dislikes = snapshot.val().dislikes;
+                  dislikes++;
+                })
+                .then(() => {
+                  firebase
+                    .database()
+                    .ref(`school${school}/news${klass}/${newsId}/dislikes`)
+                    .set(dislikes);
+
+                  const dislikePostElem = document.getElementById(`dislikePost${newsId}`);
+                  dislikePostElem.innerHTML = `<i class="fas fa-thumbs-down"></i> ${dislikes}`;
+
+                  firebase
+                    .database()
+                    .ref(`school${school}/teachers/teacher${user.code}/likes/emotions${newsId}`)
+                    .set('dislike');
+                });
+            }
+          });
+      }
+      break;
+  }
 }
 
 // sign out teacher
 function signOutTeacher() {
-    const user = JSON.parse(localStorage.getItem('user'));
+  const user = JSON.parse(localStorage.getItem('user'));
 
-    firebase.database().ref(`school${user.school}/teachers/teacher${user.code}/isOnline`).set(false);
-    localStorage.removeItem('user');
-    document.querySelector('.main-app-teacher').style.display = 'none';
-    ILVue.logIn = false;
-    ILVue.currentUser = '';
+  firebase.database().ref(`school${user.school}/teachers/teacher${user.code}/isOnline`).set(false);
+  localStorage.removeItem('user');
+  document.querySelector('.main-app-teacher').style.display = 'none';
+  ILVue.logIn = false;
+  ILVue.currentUser = '';
 
-    location.reload();
+  location.reload();
 }
 
 // sign out student
 function signOutStudent() {
-    const user = JSON.parse(localStorage.getItem('user'));
+  const user = JSON.parse(localStorage.getItem('user'));
 
-    firebase.database().ref(`school${user.school}/students/student${user.fullName.toLowerCase().trim()} ${user.klass.toLowerCase().trim()}/isOnline`).set(false);
-    localStorage.removeItem('user');
-    document.querySelector('.main-app-student').style.display = 'none';
-    ILVue.logIn = false;
-    ILVue.currentUser = '';
+  firebase
+    .database()
+    .ref(
+      `school${user.school}/students/student${user.fullName.toLowerCase().trim()} ${user.klass
+        .toLowerCase()
+        .trim()}/isOnline`,
+    )
+    .set(false);
+  localStorage.removeItem('user');
+  document.querySelector('.main-app-student').style.display = 'none';
+  ILVue.logIn = false;
+  ILVue.currentUser = '';
 
-    location.reload();
+  location.reload();
 }
 
 // add task to database
 function add_task_db(index) {
-    const user = JSON.parse(localStorage.getItem('user'));
+  const user = JSON.parse(localStorage.getItem('user'));
 
-    let nameElem = document.getElementById("name-task").value;
-    let id = ILVue.$data.tasks[index].id;
+  let nameElem = document.getElementById('name-task').value;
+  let id = ILVue.$data.tasks[index].id;
 
-    firebase.database().ref(`school${user.school}/teachers/teacher${user.code}/tasks/task${id}`).set({
-        name: nameElem,
-        id: id,
-    });
+  firebase.database().ref(`school${user.school}/teachers/teacher${user.code}/tasks/task${id}`).set({
+    name: nameElem,
+    id: id,
+  });
 }
 
 function getToDoList() {
-    // user
-    let user = JSON.parse(localStorage.getItem('user'));
+  // user
+  let user = JSON.parse(localStorage.getItem('user'));
 
-    // to do list
-    firebase.database().ref(`school${user.school}/teachers/teacher${user.code}/tasks/`).get().then((snapshot) => {
-        for (let key in snapshot.val()) {
-            firebase.database().ref(`school${user.school}/teachers/teacher${user.code}/tasks/${key}`).get().then((snapshot) => {
-                let nameTask = snapshot.val().name;
-                let idTask = snapshot.val().id;
+  // to do list
+  firebase
+    .database()
+    .ref(`school${user.school}/teachers/teacher${user.code}/tasks/`)
+    .get()
+    .then((snapshot) => {
+      for (let key in snapshot.val()) {
+        firebase
+          .database()
+          .ref(`school${user.school}/teachers/teacher${user.code}/tasks/${key}`)
+          .get()
+          .then((snapshot) => {
+            let nameTask = snapshot.val().name;
+            let idTask = snapshot.val().id;
 
-                ILVue.$data.tasks.push({
-                    name: nameTask,
-                    id: idTask,
-                });
+            ILVue.$data.tasks.push({
+              name: nameTask,
+              id: idTask,
             });
-        }
+          });
+      }
     });
 }
